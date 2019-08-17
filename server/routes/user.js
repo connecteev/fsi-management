@@ -12,6 +12,9 @@ router.post("/api/login", user_controller.user_login);
 // get request for getting all user data.
 router.get("/api/get-users", user_controller.get_users);
 
+// POST request for handling change password 
+router.post("/api/change-password", user_controller.user_changePassword);
+
 // handle user logout
 router.get("/api/logout", user_controller.user_logout);
 

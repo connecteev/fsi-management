@@ -1,4 +1,5 @@
 const passport = require("passport");
+const _ = require("lodash");
 // load up the user model
 let User = require('../model/user');
 let bcrypt = require('bcrypt');
@@ -109,6 +110,52 @@ exports.user_logout = function (req, res) {
     success: true
   });
 }
+
+exports.user_changePassword = function (req, res) {
+
+
+  User.findById(req.body.id, function (err, item) {
+
+
+    const isNotAdmin = _.result(item.local, 'admin') == '{}';
+    const isNotManager = _.result(item.local, 'manager') == '{}';
+    if (err)
+      return res.send(err)
+    if (item.validPassword(req.body.currentPassword)) {
+
+      if (isNotManager) {
+        item.local.admin.password = req.body.newPassword;
+
+        let hash = bcrypt.hashSync(item.local.admin.password, 12);
+        item.local.admin.password = hash;
+      }
+      if (isNotAdmin) {
+        item.local.manager.password = req.body.newPassword;
+
+        let hash = bcrypt.hashSync(item.local.manager.password, 12);
+        item.local.manager.password = hash;
+      }
+
+      item.save(function (err) {
+        if (err) {
+          console.log(err)
+        } else {
+          res.send({
+            success: true,
+            message: "Password Changed succussfully."
+          })
+        }
+
+      });
+    } else {
+      res.send({
+        success: false,
+        message: "Incorrect current password."
+      })
+    }
+  })
+}
+
 
 // =====================================
 // PROFILE SECTION =========================
