@@ -12,7 +12,7 @@ const Menu = [{
     group: 'apps',
     icon: 'directions_car',
     name: 'Driver',
-    href: '/driver'
+    href: '/driver/driver'
   },
   {
     title: 'Child',

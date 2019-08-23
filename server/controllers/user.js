@@ -1,5 +1,6 @@
 const passport = require("passport");
 const _ = require("lodash");
+let transporterOptions = require('../middlewares/mailTranspoter');
 // load up the user model
 let User = require('../model/user');
 let bcrypt = require('bcrypt');
@@ -111,12 +112,9 @@ exports.user_logout = function (req, res) {
   });
 }
 
+// Handle user change password
 exports.user_changePassword = function (req, res) {
-
-
   User.findById(req.body.id, function (err, item) {
-
-
     const isNotAdmin = _.result(item.local, 'admin') == '{}';
     const isNotManager = _.result(item.local, 'manager') == '{}';
     if (err)
@@ -155,6 +153,142 @@ exports.user_changePassword = function (req, res) {
     }
   })
 }
+
+
+// Sent user a reset password link for reset their password
+exports.user_forgotPassword = function (req, res) {
+  User.findOne({
+    $or: [{
+        $or: [{
+          'local.admin.email': req.body.findUser
+        }]
+      },
+      {
+        $or: [{
+          'local.manager.email': req.body.findUser
+        }]
+      }
+    ]
+  }, function (err, user) {
+    if (err) {
+      return res.send(err);
+    }
+    if (user) {
+      var genStr = (+new Date).toString(36).slice(-10) + Math.random().toString(36).slice(-10);
+      const saltRounds = 10;
+      let hash = bcrypt.hashSync(genStr, saltRounds);
+      let updateHash = hash.replace(/[/]/g, '').replace(/[$]/g, '').replace(/[.]/g, '');
+      let mailOptions;
+      const link = 'http://localhost:3000/reset-password/' + updateHash;
+      const message = "Reset your password"
+
+      if (user.local.admin) {
+        mailOptions = transporterOptions.sentRestPassMail(user.local.admin.email, link, message);
+        user.local.admin.resetPassword = updateHash;
+        user.local.admin.resetPasswordExpires = Date.now() + 172800000; // 48 hours
+      } else {
+        mailOptions = transporterOptions.sentRestPassMail(user.local.manager.email, link, message);
+        user.local.manager.resetPassword = updateHash;
+        user.local.manager.resetPasswordExpires = Date.now() + 172800000; // 48 hours
+      }
+      user.save(function () {
+        if (err) {
+          console.log(err)
+        } else {
+          res.send({
+            success: true,
+            message: 'Please check your mail to reset your password.'
+          })
+        }
+      });
+      transporterOptions.transporter.sendMail(mailOptions, function (err, info) {
+        if (err)
+          console.log(err)
+        else
+          res.send({
+            success: true,
+            message: 'reset pass token link sent user email.'
+          })
+      });
+
+
+    } else {
+      res.send('Email does not exist!!!');
+    }
+  });
+}
+
+// Verify reset passwort token and reset new password
+exports.user_resetPassword = function (req, res) {
+  User.findOne({
+    $or: [{
+        $and: [{
+            'local.admin.resetPassword': req.body.resetToken
+          },
+          {
+            'local.admin.resetPasswordExpires': {
+              $gt: Date.now()
+            }
+          }
+        ]
+      },
+      {
+        $and: [{
+            'local.manager.resetPassword': req.body.resetToken
+          },
+          {
+            'local.manager.resetPasswordExpires': {
+              $gt: Date.now()
+            }
+          }
+        ]
+      }
+    ]
+  }, function (err, result) {
+    if (err) {
+      return res.send(err);
+    }
+    if (!result) {
+      return res.json({
+        success: false,
+        message: "Password reset token is invalid or has expired."
+      });
+    }
+    if (!req.body.newPassword) {
+      return res.send({
+        resetToken: true
+      })
+    }
+    const saltRounds = 10;
+    if (result.local.admin) {
+      result.local.admin.password = req.body.newPassword;
+      result.local.admin.resetPassword = undefined;
+      result.local.admin.resetPasswordExpires = undefined;
+
+      let hash = bcrypt.hashSync(result.local.admin.password, saltRounds);
+      result.local.admin.password = hash;
+    } else {
+      result.local.manager.password = req.body.newPassword;
+      result.local.manager.resetPassword = undefined;
+      result.local.manager.resetPasswordExpires = undefined;
+
+      let hash = bcrypt.hashSync(result.local.manager.password, saltRounds);
+      result.local.manager.password = hash;
+    }
+    result.save(function (err) {
+      if (err) {
+        console.log(err)
+      } else {
+
+        res.send({
+          resetPassword: true
+        })
+      }
+
+    });
+  });
+}
+
 
 
 // =====================================

@@ -15,6 +15,12 @@ router.get("/api/get-users", user_controller.get_users);
 // POST request for handling change password 
 router.post("/api/change-password", user_controller.user_changePassword);
 
+// POST request for sending reset password link
+router.post("/api/forgot-password", user_controller.user_forgotPassword);
+
+// POST request to check reset password token and reset new password
+router.post("/api/check-reset-token", user_controller.user_resetPassword);
+
 // handle user logout
 router.get("/api/logout", user_controller.user_logout);
 
