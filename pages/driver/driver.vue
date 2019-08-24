@@ -31,7 +31,7 @@
               
             </template> 
           </a-table>
-        </v-flex>        
+        </v-flex>       
       </v-layout>
     </v-container>
   </div>
@@ -175,7 +175,9 @@ export default {
           }
         });
     },
-    addDriver() {},
+    addDriver() {
+      this.$router.push("/driver/create-driver");
+    },
     getDrivers() {
       this.loading = true;
       axios.get("/api/get-drivers").then(res => {
