@@ -63,7 +63,8 @@ module.exports = {
   plugins: [
     '@/plugins/vuetify',
     '@/plugins/vee-validate',
-    '@/plugins/antd-ui'
+    '@/plugins/antd-ui',
+
   ],
 
   /*

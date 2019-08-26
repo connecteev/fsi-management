@@ -3,7 +3,7 @@
     <v-container grid-list-xl fluid>
       <v-layout row wrap>
         <v-flex lg12 sm12 xs12>
-          <v-btn class="ml-4" depressed right color="primary" @click="addDriver"><v-icon dark>add</v-icon> Add Driver</v-btn>
+          <v-btn class="ml-4" depressed right color="primary" @click="addChild"><v-icon dark>add</v-icon> Add Child</v-btn>
           <a-table :columns="columns" :dataSource="data" @change="onChange" rowKey="_id" :loading="loading">
             <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
             
@@ -16,7 +16,7 @@
                 title="Sure to delete?"
                 @confirm="() => onDelete(record._id)">
                 <a href="javascript:;">Delete</a>
-              </a-popconfirm>
+              </a-popconfirm> 
               </div>
               
             </template> 
@@ -32,40 +32,40 @@ import axios from "axios";
 const columns = [
   {
     title: "Name",
-    dataIndex: "driver.name",
+    dataIndex: "child.name",
     width: "15%",
     scopedSlots: { customRender: "name" },
     // specify the condition of filtering result
     // here is that finding the name started with `value`
     onFilter: (value, record) => record.name.indexOf(value) === 0,
-    sorter: (a, b) => a.driver.name.length - b.driver.name.length
+    sorter: (a, b) => a.child.name.length - b.child.name.length
   },
   {
     title: "Email",
-    dataIndex: "driver.email",
+    dataIndex: "child.email",
     width: "15%",
     scopedSlots: { customRender: "email" },
     onFilter: (value, record) => record.name.indexOf(value) === 0,
-    sorter: (a, b) => a.driver.email.length - b.driver.email.length
+    sorter: (a, b) => a.child.email.length - b.child.email.length
   },
   {
     title: "Phone",
-    dataIndex: "driver.contactNumber",
+    dataIndex: "child.contactNumber",
     width: "10%",
     scopedSlots: { customRender: "phone" },
     sorter: (a, b) =>
-      a.driver.contactNumber.length - b.driver.contactNumber.length
+      a.child.contactNumber.length - b.child.contactNumber.length
   },
   {
-    title: "Rate per trip",
-    dataIndex: "driver.ratePerTrip",
+    title: "Route",
+    dataIndex: "child.routeNumber",
     width: "10%",
-    scopedSlots: { customRender: "ratePerTrip" },
-    sorter: (a, b) => a.driver.ratePerTrip.length - b.driver.ratePerTrip.length
+    scopedSlots: { customRender: "routeNumber" },
+    sorter: (a, b) => a.child.routeNumber.length - b.child.routeNumber.length
   },
   {
     title: "Address",
-    dataIndex: "driver.address.streetAddress",
+    dataIndex: "child.address.streetAddress",
     scopedSlots: { customRender: "address" },
     width: "15%",
     filters: [
@@ -81,13 +81,13 @@ const columns = [
     filterMultiple: false,
     onFilter: (value, record) => record.address.indexOf(value) === 0,
     sorter: (a, b) =>
-      a.driver.address.streetAddress.length -
-      b.driver.address.streetAddress.length
+      a.child.address.streetAddress.length -
+      b.child.address.streetAddress.length
   },
 
   {
     title: "Status",
-    dataIndex: "driver.status",
+    dataIndex: "child.status",
     scopedSlots: { customRender: "status" },
     width: "5%",
     filters: [
@@ -102,7 +102,7 @@ const columns = [
     ],
     filterMultiple: false,
     onFilter: (value, record) => record.address.indexOf(value) === 0,
-    sorter: (a, b) => a.driver.status.length - b.driver.status.length
+    sorter: (a, b) => a.child.status.length - b.child.status.length
   },
   {
     title: "Action",
@@ -147,35 +147,35 @@ export default {
       }
     },
     edit(id) {
-      this.$router.push(`/driver/update-driver/${id}`);
+      this.$router.push(`/child/update-child/${id}`);
     },
     onDelete(id) {
       axios
-        .post("/api/delete-driver", {
+        .post("/api/delete-child", {
           id
         })
         .then(res => {
           if (res.data.success) {
-            this.getDrivers();
+            this.getAllChild();
             this.$message.success(res.data.message);
           }
         });
     },
-    addDriver() {
-      this.$router.push("/driver/create-driver");
+    addChild() {
+      this.$router.push("/child/create-child");
     },
-    getDrivers() {
+    getAllChild() {
       this.loading = true;
-      axios.get("/api/get-drivers").then(res => {
+      axios.get("/api/get-all-child").then(res => {
         if (res.data.success) {
-          this.data = res.data.drivers;
+          this.data = res.data.childs;
           this.loading = false;
         }
       });
     }
   },
   created() {
-    this.getDrivers();
+    this.getAllChild();
   }
 };
 </script>

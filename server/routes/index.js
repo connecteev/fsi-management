@@ -1,5 +1,6 @@
 module.exports = function (app) {
   const userRoutes = require('./user')
   const driverRoutes = require('./driver')
-  app.use(userRoutes, driverRoutes);
+  const childRoutes = require('./child')
+  app.use(userRoutes, driverRoutes, childRoutes);
 };

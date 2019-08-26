@@ -9,6 +9,14 @@
 
     </v-breadcrumbs>
     <v-spacer></v-spacer>
+    <a-button-group>
+      <a-button type="primary" @click="$router.go(-1)">
+        <a-icon type="left" />Go back
+      </a-button>
+      <a-button type="primary" @click="$router.go(1)">
+        Go forward<a-icon type="right" />
+      </a-button>
+    </a-button-group>
     
   </v-layout>  
 </template>
@@ -42,6 +50,14 @@ export default {
         }
       });
       return breadcrumbs;
+    }
+  },
+  methods: {
+    goBack() {
+      this.$router.go(-1);
+    },
+    goForward() {
+      this.$router.go(1);
     }
   }
 };

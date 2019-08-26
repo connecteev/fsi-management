@@ -19,7 +19,7 @@ const Menu = [{
     group: 'apps',
     icon: 'face',
     name: 'Child',
-    href: '/child'
+    href: '/child/child'
   },
   {
     title: 'Passenger Assistant',

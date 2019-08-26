@@ -60,12 +60,13 @@ exports.get_drivers = function (req, res) {
 
 // Get a single driver by id
 exports.get_single_driver = function (req, res) {
-  Driver.findById(req.body.id).then(item => {
-    if (!item) {
-      return res.send("No driver found");
-    }
-    res.send(item);
-  });
+  Driver.findById(req.body.id)
+    .then(driver => {
+      if (!driver) {
+        return res.send("No driver found");
+      }
+      res.send(driver);
+    });
 };
 
 // Update a single driver details
@@ -84,6 +85,7 @@ exports.update_driver = function (req, res) {
     doc.driver.contactNumber = req.body.contactNumber;
     doc.driver.ratePerTrip = req.body.ratePerTrip;
     doc.driver.joinDate = req.body.joinDate;
+    doc.driver.leaveDate = req.body.leaveDate;
     doc.driver.status = req.body.status;
     doc.save()
       .then(item => {
