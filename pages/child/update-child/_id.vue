@@ -260,7 +260,11 @@
                             
                         </a-form-item>
                     </a-col>
-                    <a-col :span="12">
+                    
+                    
+                </a-row>
+                <a-row :gutters="24">
+                      <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
                         label="Leaving Date"
@@ -274,6 +278,64 @@
                                 <a-date-picker @change="setLeavingDate" />
                             </div>
                             
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Assign Driver"
+                        v-if="isChild"
+                        >
+                        <div v-if="child.assignedDriver.driverName">
+                          <a-select
+                            allowClear
+                            showSearch
+                            placeholder="Search or Select a driver"
+                            optionFilterProp="children"
+                            style="width: 200px"
+                            @focus="handleFocus"
+                            @blur="handleBlur"
+                            @change="setAssignDriver"
+                            :filterOption="filterOption"
+                            :defaultValue="child.assignedDriver.driverName"
+                          >
+                              <a-select-option v-for="(item, index) in drivers"
+                              :key="index" :value="item._id +' '+ item.driver.name">{{item.driver.name}}</a-select-option>
+                              
+                          </a-select>
+                        </div>
+                        <div v-else>
+                          <a-select
+                              showSearch
+                              placeholder="Search or Select a driver"
+                              optionFilterProp="children"
+                              style="width: 200px"
+                              @focus="handleFocus"
+                              @blur="handleBlur"
+                              @change="setAssignDriver"
+                              :filterOption="filterOption"
+                          >
+                  
+                              <a-select-option v-for="(item, index) in drivers"
+                              :key="index" :value="item._id +' '+ item.driver.name">{{item.driver.name}}</a-select-option>
+                              
+                          </a-select>
+
+                        </div>
+
+
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Car Seat"
+                        >
+                            <a-input
+                                v-model="child.carSeat"
+                                style="width: 100%"
+                            >
+                            </a-input>
                         </a-form-item>
                     </a-col>
                     <a-col :span="12" >
@@ -296,8 +358,7 @@
                             </a-button>
                         </a-form-item>
                     </a-col>
-                    
-                </a-row>
+                    </a-row>
                 
                 
                 
@@ -343,12 +404,18 @@ export default {
         schoolAddress: "",
         homePickUpTime: "",
         schoolPickUpTime: "",
+        carSeat: "",
         landline: "",
         medicalHistory: "",
         joinDate: "",
         leaveDate: "",
+        assignedDriver: {
+          driverId: "",
+          driverName: ""
+        },
         status: "Active"
       },
+      drivers: [],
       userId: this.$route.params.id
     };
   },
@@ -441,10 +508,43 @@ export default {
             });
         }
       });
+    },
+    setAssignDriver(value) {
+      if (value) {
+        let driverId = value.substr(0, value.indexOf(" ")); // id
+        let driverName = value.substr(value.indexOf(" ") + 1); // name
+        this.child.assignedDriver.driverId = driverId;
+        this.child.assignedDriver.driverName = driverName;
+      } else {
+        this.child.assignedDriver.driverId = "";
+        this.child.assignedDriver.driverName = "";
+      }
+    },
+
+    handleBlur() {
+      console.log("blur");
+    },
+    handleFocus() {
+      console.log("focus");
+    },
+    filterOption(input, option) {
+      return (
+        option.componentOptions.children[0].text
+          .toLowerCase()
+          .indexOf(input.toLowerCase()) >= 0
+      );
+    },
+    getAllDrivers() {
+      axios.get("/api/get-drivers").then(res => {
+        if (res.data.success) {
+          this.drivers = res.data.drivers;
+        }
+      });
     }
   },
   created() {
     this.getUserDetails();
+    this.getAllDrivers();
   }
 };
 </script>

@@ -3,7 +3,7 @@
     <v-container grid-list-xl fluid>
       <v-layout row wrap>
         <v-flex lg12 sm12 xs12>
-            <h3 class="text-xs-center">Add child details</h3>
+                            <h3 class="text-xs-center">Add pa details</h3>
             <a-form
                 class="v-card v-sheet theme--light pt-5 pr-5"
                 :form="form"
@@ -20,7 +20,7 @@
                             'name',
                             {
                                 rules: [{
-                                    required: true, message: 'Please enter child name!',
+                                    required: true, message: 'Please enter pa name!',
                                 }]
                             }
                             ]"
@@ -58,25 +58,14 @@
                     <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
-                        label="Route Number"
-                        >
-                            <a-input
-                                v-model="child.routeNumber"
-                            >
-                            </a-input>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Contact Number"
+                        label="Phone Number"
                         >
                             <a-input
                                 
                                 v-decorator="[
                                 'phone',
                                 {
-                                    rules: [{ required: true, message: 'Please input your contact number!' }],
+                                    rules: [{ required: true, message: 'Please input your phone number!' }],
                                 }
                                 ]"
                                 style="width: 100%"
@@ -87,29 +76,10 @@
                     <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
-                        label="Landline"
-                        >
-                            <a-input
-                
-                                v-decorator="[
-                                'landline',
-                                {
-                                    rules: [{
-                                        required: true, message: 'Please enter your landline number!',
-                                    }]
-                                }
-                                ]"
-                            >
-                            </a-input>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
                         label="Postal Code"
                         >
                             <a-input
-                                v-model="child.address.postalCode"
+                                v-model="pa.address.postalCode"
                                 style="width: 100%"
                             >
                             </a-input>
@@ -126,7 +96,7 @@
                                 'address',
                                 {
                                     rules: [{
-                                        required: true, message: 'Please enter address!',
+                                        required: true, message: 'Please enter pa address!',
                                     }]
                                 }
                                 ]"
@@ -140,7 +110,7 @@
                         label="Town"
                         >
                             <a-input
-                                v-model="child.address.town"
+                                v-model="pa.address.town"
                                 style="width: 100%"
                             >
                             </a-input>
@@ -152,24 +122,23 @@
                         label="Country"
                         >
                             <a-input
-                                v-model="child.address.country"
+                                v-model="pa.address.country"
                             >
                             </a-input>
                         </a-form-item>
                     </a-col>
-
                     <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
-                        label="School Name"
+                        label="Rate per trip"
                         >
                             <a-input
-                                
+                
                                 v-decorator="[
-                                'schoolName',
+                                'ratePerTrip',
                                 {
                                     rules: [{
-                                        required: true, message: 'Please enter school name!',
+                                        required: true, message: 'Please enter pa rate per trip!',
                                     }]
                                 }
                                 ]"
@@ -177,54 +146,6 @@
                             </a-input>
                         </a-form-item>
                     </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="School Address"
-                        >
-                            <a-input
-                                
-                                v-decorator="[
-                                'schoolAddress',
-                                {
-                                    rules: [{
-                                        required: true, message: 'Please enter school address!',
-                                    }]
-                                }
-                                ]"
-                            >
-                            </a-input>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Home Pick Time"
-                        >
-                            <a-time-picker use12Hours format="h:mm a" @change="setHomePickTime" />
-                            
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="School Pick Time"
-                        >
-                            <a-time-picker use12Hours format="h:mm a" @change="setSchoolPickTime" />
-                            
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Medical History"
-                        >
-                          <a-textarea v-model="child.medicalHistory" placeholder="Enter your text here" :autosize="{ minRows: 2, maxRows: 10 }" />
-
-                            
-                        </a-form-item>
-                    </a-col>
-                    
                     <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
@@ -232,43 +153,6 @@
                         >
                             <a-date-picker @change="setJoiningDate" />
                             
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-                <a-row :gutter="24">
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Assign Driver"
-                        >
-                        <a-select
-                            showSearch
-                            placeholder="Search or Select a driver"
-                            optionFilterProp="children"
-                            style="width: 200px"
-                            @focus="handleFocus"
-                            @blur="handleBlur"
-                            @change="setAssignDriver"
-                            :filterOption="filterOption"
-                            
-                        >
-                            <a-select-option v-for="(item, index) in drivers"
-                            :key="index" :value="item._id +' '+ item.driver.name">{{item.driver.name}}</a-select-option>
-                            
-                        </a-select>
-
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Car Seat"
-                        >
-                            <a-input
-                                v-model="child.carSeat"
-                                style="width: 100%"
-                            >
-                            </a-input>
                         </a-form-item>
                     </a-col>
                     <a-col :span="12">
@@ -291,7 +175,11 @@
                             </a-button>
                         </a-form-item>
                     </a-col>
+                    
                 </a-row>
+                
+                
+                
             </a-form>
         </v-flex>       
       </v-layout>
@@ -316,7 +204,7 @@ export default {
           sm: { span: 16 }
         }
       },
-      child: {
+      pa: {
         name: "",
         email: "",
         dateOfBirth: "",
@@ -327,16 +215,10 @@ export default {
           country: "",
           postalCode: ""
         },
-        routeNumber: "",
-        carSeat: "",
+        ratePerTrip: "",
         joinDate: "",
-        status: "Active",
-        assignedDriver: {
-          driverId: "",
-          driverName: ""
-        }
-      },
-      drivers: []
+        status: "Active"
+      }
     };
   },
   beforeCreate() {
@@ -344,43 +226,34 @@ export default {
   },
   methods: {
     setDateOfBirth(date, dateString) {
-      this.child.dateOfBirth = dateString;
+      this.pa.dateOfBirth = dateString;
     },
     setJoiningDate(date, dateString) {
-      this.child.joinDate = dateString;
-    },
-    setHomePickTime(time, timeString) {
-      this.child.homePickUpTime = timeString;
-    },
-    setSchoolPickTime(time, timeString) {
-      this.child.schoolPickUpTime = timeString;
+      this.pa.joinDate = dateString;
     },
     setStatus(status) {
       if (status) {
-        return (this.child.status = "Active");
+        return (this.pa.status = "Active");
       }
-      this.child.status = "Inactive";
+      this.pa.status = "Inactive";
     },
     handleSubmit(e) {
       e.preventDefault();
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           this.loading = true;
-          this.child.name = values.name;
-          this.child.email = values.email;
-          this.child.contactNumber = values.phone;
-          this.child.address.streetAddress = values.address;
-          this.child.landline = values.landline;
-          this.child.schoolName = values.schoolName;
-          this.child.schoolAddress = values.schoolAddress;
-
+          this.pa.name = values.name;
+          this.pa.email = values.email;
+          this.pa.contactNumber = values.phone;
+          this.pa.address.streetAddress = values.address;
+          this.pa.ratePerTrip = values.ratePerTrip;
           axios
-            .post("/api/create-child", { ...this.child })
+            .post("/api/create-pa", { ...this.pa })
             .then(res => {
               this.loading = false;
               if (res.data.success) {
                 this.$message.success(res.data.message);
-                this.$router.push("/child/child");
+                this.$router.push("/pa/pa");
               } else {
                 this.$message.warning(res.data.message);
               }
@@ -391,36 +264,7 @@ export default {
             });
         }
       });
-    },
-    setAssignDriver(value) {
-      let driverId = value.substr(0, value.indexOf(" ")); // id
-      let driverName = value.substr(value.indexOf(" ") + 1); // name
-      this.child.assignedDriver.driverId = driverId;
-      this.child.assignedDriver.driverName = driverName;
-    },
-    handleBlur() {
-      console.log("blur");
-    },
-    handleFocus() {
-      console.log("focus");
-    },
-    filterOption(input, option) {
-      return (
-        option.componentOptions.children[0].text
-          .toLowerCase()
-          .indexOf(input.toLowerCase()) >= 0
-      );
-    },
-    getAllDrivers() {
-      axios.get("/api/get-drivers").then(res => {
-        if (res.data.success) {
-          this.drivers = res.data.drivers;
-        }
-      });
     }
-  },
-  created() {
-    this.getAllDrivers();
   }
 };
 </script>

@@ -35,7 +35,7 @@
                 <a-modal
                   title="Forgot Password"
                   :visible="visible"
-                  @ok="handleOk"
+                  @ok="forgotPass"
                   okText="Submit"	
                   :confirmLoading="confirmLoading"
                   @cancel="handleCancel"
@@ -98,7 +98,7 @@ export default {
     showForgotPassModal() {
       this.visible = true;
     },
-    handleOk(e) {
+    forgotPass(e) {
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           this.confirmLoading = true;

@@ -9,7 +9,8 @@ var childSchema = mongoose.Schema({
       type: String,
       unique: true,
       sparse: true,
-      trim: true
+      trim: true,
+      lowercase: true
     },
     name: String,
     dateOfBirth: String,
@@ -27,9 +28,14 @@ var childSchema = mongoose.Schema({
     homePickUpTime: String,
     schoolPickUpTime: String,
     routeNumber: String,
+    carSeat: String,
     joinDate: String,
     leaveDate: String,
     status: String,
+    assignedDriver: {
+      driverName: String,
+      driverId: String
+    },
     createdAt: {
       type: Date,
     },

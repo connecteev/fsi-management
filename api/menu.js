@@ -26,7 +26,7 @@ const Menu = [{
     group: 'apps',
     icon: 'supervised_user_circle',
     name: 'Passenger Assistant',
-    href: '/pa'
+    href: '/pa/pa'
   },
   // {
   //   title: 'Inbox',

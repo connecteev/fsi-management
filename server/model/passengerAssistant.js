@@ -1,10 +1,10 @@
-// models/user.js
+// models/passengerAssistant.js
 // load the things we need
 var mongoose = require('mongoose');
 
 // define the schema for our driver model
-var driverSchema = mongoose.Schema({
-  driver: {
+var paSchema = mongoose.Schema({
+  pa: {
     email: {
       type: String,
       unique: true,
@@ -32,5 +32,5 @@ var driverSchema = mongoose.Schema({
 
 });
 
-//create the model for drivers and expose it to our app
-module.exports = mongoose.model('Driver', driverSchema);
+//create the model for passenger assistant and expose it to our app
+module.exports = mongoose.model('Pa', paSchema);

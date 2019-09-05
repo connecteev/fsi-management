@@ -12,7 +12,8 @@ var userSchema = mongoose.Schema({
         type: String,
         unique: true,
         sparse: true,
-        trim: true
+        trim: true,
+        lowercase: true
       },
       password: String,
       name: String,
@@ -34,7 +35,8 @@ var userSchema = mongoose.Schema({
         type: String,
         unique: true,
         sparse: true,
-        trim: true
+        trim: true,
+        lowercase: true
       },
       password: String,
       name: String,

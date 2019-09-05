@@ -27,7 +27,9 @@ exports.create_child = function (req, res) {
         childData.child.homePickUpTime = req.body.homePickUpTime;
         childData.child.schoolPickUpTime = req.body.schoolPickUpTime;
         childData.child.routeNumber = req.body.routeNumber;
+        childData.child.carSeat = req.body.carSeat;
         childData.child.joinDate = req.body.joinDate;
+        childData.child.assignedDriver = req.body.assignedDriver;
         childData.child.status = req.body.status;
         childData.child.createdAt = Date.now();
 
@@ -52,9 +54,7 @@ exports.create_child = function (req, res) {
 // get all child
 exports.get_all_child = function (req, res) {
   Child.find()
-    .sort({
-      'admin.registeredAt': -1
-    })
+    .sort('-child.createdAt')
     .exec()
     .then(childs => {
       res.send({
@@ -96,8 +96,10 @@ exports.update_child = function (req, res) {
     doc.child.homePickUpTime = req.body.homePickUpTime;
     doc.child.schoolPickUpTime = req.body.schoolPickUpTime;
     doc.child.routeNumber = req.body.routeNumber;
+    doc.child.carSeat = req.body.carSeat;
     doc.child.joinDate = req.body.joinDate;
     doc.child.leaveDate = req.body.leaveDate;
+    doc.child.assignedDriver = req.body.assignedDriver;
     doc.child.status = req.body.status;
     doc.save()
       .then(item => {

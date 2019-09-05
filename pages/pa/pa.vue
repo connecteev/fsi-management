@@ -3,20 +3,20 @@
     <v-container grid-list-xl fluid>
       <v-layout row wrap>
         <v-flex lg12 sm12 xs12>
-          <v-btn class="ml-4" depressed right color="primary" @click="addChild"><v-icon dark>add</v-icon> Add Child</v-btn>
+          <v-btn class="ml-4" depressed right color="primary" @click="addPa"><v-icon dark>add</v-icon> Add Passenger Assistant</v-btn>
           <a-table :columns="columns" :dataSource="data" @change="onChange" rowKey="_id" :loading="loading">
             <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
             
             <template slot="operation" slot-scope="text, record, index">
               <div class='editable-row-operations'>
-                <a-button @click="() => edit(record._id)" >Edit</a-button>
+                <a @click="() => edit(record._id)">Edit</a>
                  <a-divider type="vertical" />
                 <a-popconfirm
                 v-if="data.length"
                 title="Sure to delete?"
-                @confirm="() => onDelete(record._id)" >
+                @confirm="() => onDelete(record._id)">
                 <a href="javascript:;">Delete</a>
-              </a-popconfirm> 
+              </a-popconfirm>
               </div>
               
             </template> 
@@ -32,58 +32,48 @@ import axios from "axios";
 const columns = [
   {
     title: "Name",
-    dataIndex: "child.name",
+    dataIndex: "pa.name",
     width: "15%",
     scopedSlots: { customRender: "name" },
     // specify the condition of filtering result
     // here is that finding the name started with `value`
     onFilter: (value, record) => record.name.indexOf(value) === 0,
-    sorter: (a, b) => a.child.name.length - b.child.name.length
+    sorter: (a, b) => a.pa.name.length - b.pa.name.length
   },
   {
     title: "Email",
-    dataIndex: "child.email",
+    dataIndex: "pa.email",
     width: "15%",
     scopedSlots: { customRender: "email" },
     onFilter: (value, record) => record.name.indexOf(value) === 0,
-    sorter: (a, b) => a.child.email.length - b.child.email.length
+    sorter: (a, b) => a.pa.email.length - b.pa.email.length
   },
   {
     title: "Phone",
-    dataIndex: "child.contactNumber",
+    dataIndex: "pa.contactNumber",
     width: "10%",
     scopedSlots: { customRender: "phone" },
-    sorter: (a, b) =>
-      a.child.contactNumber.length - b.child.contactNumber.length
+    sorter: (a, b) => a.pa.contactNumber.length - b.pa.contactNumber.length
   },
   {
-    title: "Route",
-    dataIndex: "child.routeNumber",
+    title: "Rate per trip",
+    dataIndex: "pa.ratePerTrip",
     width: "10%",
-    scopedSlots: { customRender: "routeNumber" },
-    sorter: (a, b) => a.child.routeNumber.length - b.child.routeNumber.length
-  },
-  {
-    title: "Assigned Driver",
-    dataIndex: "child.assignedDriver.driverName",
-    width: "10%",
-    scopedSlots: { customRender: "driverName" },
-    sorter: (a, b) =>
-      a.child.assignedDriver.driverName - b.child.assignedDriver.driverName
+    scopedSlots: { customRender: "ratePerTrip" },
+    sorter: (a, b) => a.pa.ratePerTrip.length - b.pa.ratePerTrip.length
   },
   {
     title: "Address",
-    dataIndex: "child.address.streetAddress",
+    dataIndex: "pa.address.streetAddress",
     scopedSlots: { customRender: "address" },
     width: "15%",
     sorter: (a, b) =>
-      a.child.address.streetAddress.length -
-      b.child.address.streetAddress.length
+      a.pa.address.streetAddress.length - b.pa.address.streetAddress.length
   },
 
   {
     title: "Status",
-    dataIndex: "child.status",
+    dataIndex: "pa.status",
     scopedSlots: { customRender: "status" },
     width: "5%",
     filters: [
@@ -97,8 +87,8 @@ const columns = [
       }
     ],
     filterMultiple: false,
-    onFilter: (value, record) => record.child.status.indexOf(value) === 0,
-    sorter: (a, b) => a.child.status.length - b.child.status.length
+    onFilter: (value, record) => record.pa.status.indexOf(value) === 0,
+    sorter: (a, b) => a.pa.status.length - b.pa.status.length
   },
   {
     title: "Action",
@@ -143,35 +133,35 @@ export default {
       }
     },
     edit(id) {
-      this.$router.push(`/child/update-child/${id}`);
+      this.$router.push(`/pa/update-pa/${id}`);
     },
     onDelete(id) {
       axios
-        .post("/api/delete-child", {
+        .post("/api/delete-pa", {
           id
         })
         .then(res => {
           if (res.data.success) {
-            this.getAllChild();
+            this.getAllPa();
             this.$message.success(res.data.message);
           }
         });
     },
-    addChild() {
-      this.$router.push("/child/create-child");
+    addPa() {
+      this.$router.push("/pa/create-pa");
     },
-    getAllChild() {
+    getAllPa() {
       this.loading = true;
-      axios.get("/api/get-all-child").then(res => {
+      axios.get("/api/get-all-pa").then(res => {
         if (res.data.success) {
-          this.data = res.data.childs;
+          this.data = res.data.pas;
           this.loading = false;
         }
       });
     }
   },
   created() {
-    this.getAllChild();
+    this.getAllPa();
   }
 };
 </script>

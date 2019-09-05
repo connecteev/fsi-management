@@ -207,10 +207,7 @@
                         </a-form-item>
                     </a-col>
                     
-                </a-row>
-                
-                
-                
+                </a-row>                
             </a-form>
         </v-flex>       
       </v-layout>

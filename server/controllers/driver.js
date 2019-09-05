@@ -46,9 +46,7 @@ exports.create_driver = function (req, res) {
 // get all drivers
 exports.get_drivers = function (req, res) {
   Driver.find()
-    .sort({
-      'admin.registeredAt': -1
-    })
+    .sort('-driver.createdAt')
     .exec()
     .then(drivers => {
       res.send({

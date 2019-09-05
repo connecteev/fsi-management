@@ -65,9 +65,7 @@ exports.user_registration = function (req, res) {
 
 exports.get_users = function (req, res) {
   User.find()
-    .sort({
-      'admin.registeredAt': -1
-    })
+    .sort('-admin.registeredAt')
     .exec()
     .then(users => {
       res.send({
