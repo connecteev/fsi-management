@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-row :gutter="24" class="ml-2 mr-3 " v-if="userDocs.length > 0">
-      <h4 class="text-xs-center ">Documents for {{userDocs[0].document.userName}} <a-divider class="grey--text" type="vertical" /> Total files {{userDocs.length}}</h4>  
+      <h4 class="text-xs-center ">Documents for {{userDocs[0].document.userName}} - Total files {{userDocs.length}}</h4>  
       <a-col class="gutter-row" :span="6"  v-for="(items, index) in userDocs"
         :key="index">
         <a-card
@@ -10,16 +10,17 @@
         >
         <img src="" alt="">
         <img
-            alt="example"
-            :src="`../${items.document.documentPath}`"
+            :alt="items.document.documentName"
+            :src="docImage(index)"
             slot="cover"
+            height="180"
         />
         <template class="ant-card-actions" slot="actions">
             <a-tooltip placement="top" >
               <template slot="title">
                 <span>View</span>
               </template>
-              <a href="@/static/fsi-logo.png" target="_blank" download><a-icon type="eye" /></a>
+              <a :href="docImage(index)" target="_blank"><a-icon type="eye" /></a>
             </a-tooltip>
             <a-tooltip placement="top" >
               <template slot="title">
@@ -58,8 +59,24 @@ export default {
       userDocs: []
     };
   },
-
+  computed: {
+    //docImage: function() {
+    // let imgPath = this.userDocs[0].document.documentPath;
+    // imgPath = imgPath.substring(imgPath.indexOf("/") + 1);
+    // return require(`../../uploads/${imgPath}`);
+    // //return require(`../../${this.userDocs[0].document.documentPath}`);
+    // if (userDocs.length > 0)
+    //   return console.log(userDocs[0].document.documentPath);
+    // // Request the image as a webpack module by using `require`
+    // return require(`../../uploads/2019-09-05T22:10:29.405Zaaa.jpg`);
+    //}
+  },
   methods: {
+    docImage(index) {
+      let imgPath = this.userDocs[index].document.documentPath;
+      imgPath = imgPath.substring(imgPath.indexOf("/") + 1);
+      return require(`../../uploads/${imgPath}`);
+    },
     deleteDoc(id) {
       axios.post("/api/delete-document", { id }).then(res => {
         if (res.data.success) {
@@ -78,6 +95,7 @@ export default {
         .then(res => {
           if (res.data.success) {
             this.userDocs = res.data.documents;
+            // this.docImage();
           }
         })
         .catch(err => {
