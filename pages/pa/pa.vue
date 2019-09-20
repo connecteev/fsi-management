@@ -55,13 +55,13 @@ const columns = [
     scopedSlots: { customRender: "phone" },
     sorter: (a, b) => a.pa.contactNumber.length - b.pa.contactNumber.length
   },
-  {
-    title: "Rate per trip",
-    dataIndex: "pa.ratePerTrip",
-    width: "10%",
-    scopedSlots: { customRender: "ratePerTrip" },
-    sorter: (a, b) => a.pa.ratePerTrip.length - b.pa.ratePerTrip.length
-  },
+  // {
+  //   title: "Rate per trip",
+  //   dataIndex: "pa.ratePerTrip",
+  //   width: "10%",
+  //   scopedSlots: { customRender: "ratePerTrip" },
+  //   sorter: (a, b) => a.pa.ratePerTrip.length - b.pa.ratePerTrip.length
+  // },
   {
     title: "Address",
     dataIndex: "pa.address.streetAddress",

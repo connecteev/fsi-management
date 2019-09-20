@@ -9,7 +9,7 @@ router.post("/api/create-driver", driver_controller.create_driver);
 // GET request for fetching all drivers from DB
 router.get("/api/get-drivers", driver_controller.get_drivers);
 
-// Get request to find a sinle driver
+// Get request to find a single driver
 router.post("/api/get-single-driver", driver_controller.get_single_driver);
 
 // POST request to update a driver details

@@ -338,6 +338,30 @@
                             </a-input>
                         </a-form-item>
                     </a-col>
+                    <a-col :span="12">
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Seating Position"
+                        >
+                            <a-input
+                                v-model="child.seatingPostion"
+                                style="width: 100%"
+                            >
+                            </a-input>
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Music"
+                        >
+                            <a-input
+                                v-model="child.music"
+                                style="width: 100%"
+                            >
+                            </a-input>
+                        </a-form-item>
+                    </a-col>
                     <a-col :span="12" >
                         <a-form-item
                         v-bind="formItemLayout"
@@ -405,6 +429,8 @@ export default {
         homePickUpTime: "",
         schoolPickUpTime: "",
         carSeat: "",
+        seatingPosition: "",
+        music: "",
         landline: "",
         medicalHistory: "",
         joinDate: "",

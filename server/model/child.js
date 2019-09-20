@@ -29,6 +29,8 @@ var childSchema = mongoose.Schema({
     schoolPickUpTime: String,
     routeNumber: String,
     carSeat: String,
+    seatingPosition: String,
+    music: String,
     joinDate: String,
     leaveDate: String,
     status: String,

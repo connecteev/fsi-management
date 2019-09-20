@@ -76,18 +76,6 @@
                     <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
-                        label="Postal Code"
-                        >
-                            <a-input
-                                v-model="driver.address.postalCode"
-                                style="width: 100%"
-                            >
-                            </a-input>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
                         label="Address"
                         >
                             <a-input
@@ -107,6 +95,19 @@
                     <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
+                        label="Postal Code"
+                        >
+                            <a-input
+                                v-model="driver.address.postalCode"
+                                style="width: 100%"
+                            >
+                            </a-input>
+                        </a-form-item>
+                    </a-col>
+                    
+                    <a-col :span="12">
+                        <a-form-item
+                        v-bind="formItemLayout"
                         label="Town"
                         >
                             <a-input
@@ -119,7 +120,7 @@
                     <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
-                        label="Country"
+                        label="County"
                         >
                             <a-input
                                 v-model="driver.address.country"

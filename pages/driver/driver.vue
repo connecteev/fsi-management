@@ -111,7 +111,7 @@ const columns = [
   {
     title: "Name",
     dataIndex: "driver.name",
-    width: "15%",
+    width: "10%",
     scopedSlots: { customRender: "name" },
     // specify the condition of filtering result
     // here is that finding the name started with `value`
@@ -121,7 +121,7 @@ const columns = [
   {
     title: "Email",
     dataIndex: "driver.email",
-    width: "15%",
+    width: "10%",
     scopedSlots: { customRender: "email" },
     onFilter: (value, record) => record.name.indexOf(value) === 0,
     sorter: (a, b) => a.driver.email.length - b.driver.email.length
@@ -129,18 +129,18 @@ const columns = [
   {
     title: "Phone",
     dataIndex: "driver.contactNumber",
-    width: "10%",
+    width: "7%",
     scopedSlots: { customRender: "phone" },
     sorter: (a, b) =>
       a.driver.contactNumber.length - b.driver.contactNumber.length
   },
-  {
-    title: "Rate per trip",
-    dataIndex: "driver.ratePerTrip",
-    width: "10%",
-    scopedSlots: { customRender: "ratePerTrip" },
-    sorter: (a, b) => a.driver.ratePerTrip.length - b.driver.ratePerTrip.length
-  },
+  // {
+  //   title: "Rate per trip",
+  //   dataIndex: "driver.ratePerTrip",
+  //   width: "10%",
+  //   scopedSlots: { customRender: "ratePerTrip" },
+  //   sorter: (a, b) => a.driver.ratePerTrip.length - b.driver.ratePerTrip.length
+  // },
   {
     title: "Address",
     dataIndex: "driver.address.streetAddress",

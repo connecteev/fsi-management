@@ -106,18 +106,6 @@
                     <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
-                        label="Postal Code"
-                        >
-                            <a-input
-                                v-model="child.address.postalCode"
-                                style="width: 100%"
-                            >
-                            </a-input>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
                         label="Address"
                         >
                             <a-input
@@ -137,6 +125,19 @@
                     <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
+                        label="Postal Code"
+                        >
+                            <a-input
+                                v-model="child.address.postalCode"
+                                style="width: 100%"
+                            >
+                            </a-input>
+                        </a-form-item>
+                    </a-col>
+                    
+                    <a-col :span="12">
+                        <a-form-item
+                        v-bind="formItemLayout"
                         label="Town"
                         >
                             <a-input
@@ -149,7 +150,7 @@
                     <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
-                        label="Country"
+                        label="County"
                         >
                             <a-input
                                 v-model="child.address.country"
@@ -274,6 +275,30 @@
                     <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
+                        label="Seating Position"
+                        >
+                            <a-input
+                                v-model="child.seatingPostion"
+                                style="width: 100%"
+                            >
+                            </a-input>
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Music"
+                        >
+                            <a-input
+                                v-model="child.music"
+                                style="width: 100%"
+                            >
+                            </a-input>
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                        <a-form-item
+                        v-bind="formItemLayout"
                         label="Active"
                         >
                             <a-switch defaultChecked @change='setStatus'/>
@@ -330,6 +355,8 @@ export default {
         routeNumber: "",
         carSeat: "",
         joinDate: "",
+        seatingPosition: "",
+        music: "",
         status: "Active",
         assignedDriver: {
           driverId: "",
