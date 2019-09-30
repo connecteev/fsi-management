@@ -13,20 +13,21 @@ exports.create_attendance = function (req, res) {
       }
       if (attendance) {
         attendance.attendance.dates.push(req.body.attendanceDate);
-        attendance.save()
+        attendance
+          .save()
           .then(item => {
             res.json({
               success: true,
               message: "Attendance added successfully.",
               item
-            })
+            });
           })
           .catch(err => {
             res.json({
               message: "Unable to add attendance.",
               err
-            })
-          })
+            });
+          });
       } else {
         let attendanceData = new Attendance();
         attendanceData.attendance.driverId = req.body.driverId;
@@ -37,12 +38,11 @@ exports.create_attendance = function (req, res) {
           .then(item => {
             res.send({
               success: true,
-              message: "Saved successfully.",
+              message: "Attendance added successfully.",
               item
             });
           })
           .catch(err => {
-
             res.status(400).send({
               message: "unable to save user to database",
               err
@@ -55,37 +55,52 @@ exports.create_attendance = function (req, res) {
 
 // get all attendances
 exports.get_attendances = function (req, res) {
-  attendance.find()
-    .sort('-attendance.createdAt')
+  Attendance.find()
+    .sort("-attendance.createdAt")
     .exec()
     .then(attendances => {
       res.send({
         success: true,
         attendances
-      })
-    })
-}
+      });
+    });
+};
 
-// Get a single attendance by id
-exports.get_single_attendance = function (req, res) {
-  attendance.findById(req.body.id)
-    .then(attendance => {
+// Get a single driver attendance by driverId
+exports.get_driver_attendance = function (req, res) {
+  Attendance.findOne({
+    "attendance.driverId": req.body.driverId
+  }).then(attendance => {
+    if (!attendance) {
+      return res.send("No attendance found");
+    }
+    res.send(attendance);
+  });
+};
+
+// Ger current date attendance by date
+
+exports.get_todays_attendance = function (req, res) {
+  Attendance.find({
+    "attendance.dates.date": req.body.currentDate
+  }).then(
+    attendance => {
       if (!attendance) {
         return res.send("No attendance found");
       }
       res.send(attendance);
-    });
+    }
+  );
 };
 
 // Update a single attendance details
 exports.update_attendance = function (req, res) {
   attendance.findById(req.body.id, function (err, doc) {
-    if (err)
-      return res.send(err)
+    if (err) return res.send(err);
     if (!doc)
       return res.send({
-        message: 'attendance not found.'
-      })
+        message: "attendance not found."
+      });
     doc.attendance.name = req.body.name;
     doc.attendance.email = req.body.email;
     doc.attendance.dateOfBirth = req.body.dateOfBirth;
@@ -95,34 +110,35 @@ exports.update_attendance = function (req, res) {
     doc.attendance.joinDate = req.body.joinDate;
     doc.attendance.leaveDate = req.body.leaveDate;
     doc.attendance.status = req.body.status;
-    doc.save()
+    doc
+      .save()
       .then(item => {
         res.json({
           success: true,
           message: "attendance updated successfully.",
           item
-        })
+        });
       })
       .catch(err => {
         res.json({
           message: "Unable to update.",
           err
-        })
-      })
-  })
-}
+        });
+      });
+  });
+};
 
 // Delete a attendance
 exports.delete_attendance = function (req, res) {
   attendance.findByIdAndRemove(req.body.id).then(doc => {
     if (!doc) {
       return res.send({
-        message: 'attendance not found.'
-      })
+        message: "attendance not found."
+      });
     }
     res.send({
       success: true,
-      message: 'attendance deleted successfully'
-    })
-  })
-}
+      message: "attendance deleted successfully"
+    });
+  });
+};

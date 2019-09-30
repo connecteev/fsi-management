@@ -17,7 +17,7 @@
               </div> 
             </template> 
             <template slot="operation" slot-scope="text, record, index">
-              <a-button type="primary" @click="addAttendance(record._id)">Submit</a-button>
+              <a-button type="primary" @click="addAttendance(record._id, index)">Submit</a-button>
             </template> 
           </a-table>
         </v-flex>       
@@ -77,15 +77,12 @@ export default {
       checkedShiftE: false,
       checkedShiftM: false,
       confirmLoading: false,
-      file: null,
-      uploading: false,
-      document: {
-        expiryDate: "",
-        redAlertDate: "",
-        greenAlertDate: "",
-        status: "Active",
-        userId: "",
-        userName: ""
+      attendance: {
+        driverId: "",
+        attendanceDate: {
+          date: "",
+          shifts: {}
+        }
       }
     };
   },
@@ -117,14 +114,26 @@ export default {
           }
         });
     },
-
-    addDriver() {
-      this.$router.push("/driver/create-driver");
+    addAttendance(id, index) {
+      this.attendance.driverId = id;
+      this.attendance.attendanceDate.date = moment().format("YYYY/MM/DD");
+      this.attendance.attendanceDate.shifts.morning = this.checkedShiftM;
+      this.attendance.attendanceDate.shifts.evening = this.checkedShiftE;
+      axios
+        .post("/api/create-attendance", this.attendance)
+        .then(res => {
+          if (res.data.success) {
+            this.data.splice(index, 1);
+            this.$message.success(res.data.message);
+            this.attendance.attendanceDate.date = "";
+            this.attendance.attendanceDate.shifts.morning = false;
+            this.attendance.attendanceDate.shifts.evening = false;
+            this.checkedShiftM = false;
+            this.checkedShiftE = false;
+          }
+        })
+        .catch(e => {});
     },
-    viewDocs(id) {
-      this.$router.push(`/view-docs/${id}`);
-    },
-    addAttendance() {},
     handleCancel(e) {
       console.log("Clicked cancel button");
       this.showAddDocModal = false;
