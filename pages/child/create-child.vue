@@ -299,6 +299,18 @@
                     <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
+                        label="PA Required"
+                        >
+                            <a-radio-group @change="setPaRequired" v-model="child.paRequired">
+                              <a-radio value="Yes">Yes</a-radio>
+                              <a-radio value="No">No</a-radio>
+                            </a-radio-group>
+                            
+                        </a-form-item>     
+                    </a-col>
+                    <a-col :span="12">
+                        <a-form-item
+                        v-bind="formItemLayout"
                         label="Active"
                         >
                             <a-switch defaultChecked @change='setStatus'/>
@@ -358,6 +370,7 @@ export default {
         seatingPosition: "",
         music: "",
         status: "Active",
+        paRequired: "No",
         assignedDriver: {
           driverId: "",
           driverName: ""
@@ -387,6 +400,9 @@ export default {
         return (this.child.status = "Active");
       }
       this.child.status = "Inactive";
+    },
+    setPaRequired(e) {
+      this.child.paRequired = e.target.value;
     },
     handleSubmit(e) {
       e.preventDefault();

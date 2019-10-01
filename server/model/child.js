@@ -38,6 +38,7 @@ var childSchema = mongoose.Schema({
       driverName: String,
       driverId: String
     },
+    paRequired: String,
     createdAt: {
       type: Date,
     },

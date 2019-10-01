@@ -32,6 +32,7 @@ exports.create_child = function (req, res) {
         childData.child.music = req.body.music;
         childData.child.joinDate = req.body.joinDate;
         childData.child.assignedDriver = req.body.assignedDriver;
+        childData.child.paRequired = req.body.paRequired;
         childData.child.status = req.body.status;
         childData.child.createdAt = Date.now();
 
@@ -104,6 +105,7 @@ exports.update_child = function (req, res) {
     doc.child.joinDate = req.body.joinDate;
     doc.child.leaveDate = req.body.leaveDate;
     doc.child.assignedDriver = req.body.assignedDriver;
+    doc.child.paRequired = req.body.paRequired;
     doc.child.status = req.body.status;
     doc.save()
       .then(item => {

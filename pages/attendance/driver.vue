@@ -11,7 +11,7 @@
               <div class='editable-row-operations'>
                 
                   <a-row >
-                    <a-col :span="24"><a-checkbox @change="checkShirts" value="M">M</a-checkbox> <a-checkbox value="E" @change="checkShirts">E</a-checkbox></a-col>
+                    <a-col :span="24"><a-checkbox @change="checkShirts" value="M">AM</a-checkbox> <a-checkbox value="E" @change="checkShirts">PM</a-checkbox></a-col>
                   </a-row>
                
               </div> 
