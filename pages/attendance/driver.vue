@@ -9,7 +9,7 @@
             
             <template slot="shifts" slot-scope="text, record, index">
               <div class='editable-row-operations'>
-                
+    
                   <a-row >
                     <a-col :span="24"><a-checkbox @change="checkShirts" value="M">AM</a-checkbox> <a-checkbox value="E" @change="checkShirts">PM</a-checkbox></a-col>
                   </a-row>
@@ -54,14 +54,7 @@ const columns = [
 ];
 
 const data = [];
-// for (let i = 1; i < 100; i++) {
-//   data.push({
-//     key: i.toString(),
-//     name: `Edrward ${i}`,
-//     age: 32,
-//     address: `London Park no. ${i}`
-//   });
-// }
+
 
 function onChange(pagination, filters, sorter) {
   console.log("params", pagination, filters, sorter);
