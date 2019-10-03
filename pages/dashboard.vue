@@ -44,15 +44,9 @@
           <h4>Absent Today - {{ moment().format('LL') }}</h4>
           <a-table :columns="columns" :dataSource="data" @change="onChange" rowKey="_id" :loading="loading">
             <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
-            <template slot="shifts" slot-scope="text, record, index">
-              <div class='editable-row-operations'>
-                  <a-row >
-                    <a-col :span="24"><a-checkbox @change="checkShirts" value="M">AM</a-checkbox> <a-checkbox value="E" @change="checkShirts">PM</a-checkbox></a-col>
-                  </a-row>
-              </div> 
-            </template> 
+            
             <template slot="operation" slot-scope="text, record, index">
-              <a-button type="primary" @click="addAttendance(record._id, index)">Submit</a-button>
+              <a-button type="primary" @click="addAttendance(record._id, index)"><a-icon type="edit" /></a-button>
             </template> 
           </a-table>
         </v-flex>  
@@ -90,13 +84,7 @@ const columns = [
     sorter: (a, b) => a.driver.name.length - b.driver.name.length
   },
   {
-    title: "Working Shift's",
-    dataIndex: "shifts",
-    width: "30%",
-    scopedSlots: { customRender: "shifts" }
-  },
-  {
-    title: "Make Attendance",
+    title: "Alternative",
     dataIndex: "operation",
     width: "20%",
     scopedSlots: { customRender: "operation" }
@@ -104,6 +92,11 @@ const columns = [
 ];
 
 const data = [];
+
+
+function onChange(pagination, filters, sorter) {
+  console.log("params", pagination, filters, sorter);
+}
 
 export default {
   layout: "dashboard",
@@ -140,6 +133,8 @@ export default {
     
   },
   methods: {
+    moment,
+    onChange,
     getAuthenticatedUser() {
       axios
         .get("/api/authenticated-user")
@@ -166,6 +161,7 @@ export default {
   },
   created() {
     this.getAuthenticatedUser();
+    this.getDrivers();
   }
 };
 </script>
