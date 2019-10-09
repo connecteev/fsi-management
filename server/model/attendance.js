@@ -7,6 +7,7 @@ var attendanceSchema = mongoose.Schema({
   attendance: {
     driverId: String,
     dates: [],
+    alternativeShifts: [],
     createdAt: {
       type: Date
     }

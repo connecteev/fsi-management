@@ -53,6 +53,59 @@ exports.create_attendance = function (req, res) {
   );
 };
 
+// Handle - create alternative shits with data from the client app on POST request
+exports.create_alternative_shifts = function (req, res) {
+  // Create a new attendance
+  Attendance.findOne({
+      "attendance.driverId": req.body.driverId
+    },
+    function (err, attendance) {
+      if (err) {
+        return res.send(err);
+      }
+      if (attendance) {
+        attendance.attendance.alternativeShifts.push(req.body.alternativeShifts);
+        attendance
+          .save()
+          .then(item => {
+            res.json({
+              success: true,
+              message: "Attendance added successfully.",
+              item
+            });
+          })
+          .catch(err => {
+            res.json({
+              message: "Unable to add attendance.",
+              err
+            });
+          });
+      }
+      // else {
+      //   let attendanceData = new Attendance();
+      //   attendanceData.attendance.driverId = req.body.driverId;
+      //   attendanceData.attendance.dates.push(req.body.attendanceDate);
+      //   attendanceData.attendance.createdAt = Date.now();
+      //   attendanceData
+      //     .save()
+      //     .then(item => {
+      //       res.send({
+      //         success: true,
+      //         message: "Attendance added successfully.",
+      //         item
+      //       });
+      //     })
+      //     .catch(err => {
+      //       res.status(400).send({
+      //         message: "unable to save user to database",
+      //         err
+      //       });
+      //     });
+      // }
+    }
+  );
+};
+
 // get all attendances
 exports.get_attendances = function (req, res) {
   Attendance.find()

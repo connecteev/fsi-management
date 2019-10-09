@@ -46,7 +46,35 @@
             <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
             
             <template slot="operation" slot-scope="text, record, index">
-              <a-button type="primary" @click="addAttendance(record._id, index)"><a-icon type="edit" /></a-button>
+              <a-button type="primary" @click="showModal = !showModal, checkExistingShifts(record._id)"><a-icon type="edit" /></a-button>
+              <a-modal
+                title="Alternate Shifts"
+                :width="1000"
+                :visible="showModal"
+                v-model="showModal"
+              >
+              <template slot="footer">
+                <a-button key="back" type="primary" @click="handleCancel">Return</a-button>
+              
+              </template>
+                <a-table :columns="columns" :dataSource="allDriver" @change="onChange" rowKey="_id" :loading="loading">
+                  <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
+                  
+                  
+                  <template slot="operation" slot-scope="text, record, index">
+                    <div class='editable-row-operations'>
+          
+                        <a-row >
+                          <a-col :span="16"><a-checkbox v-if="!existShiftM" @change="checkShifts" value="M">AM</a-checkbox> <a-checkbox v-if="!existShiftE" value="E" @change="checkShifts">PM</a-checkbox></a-col>
+                        <a-button type="primary" @click="alternateShifts(record._id, index)">Submit</a-button>
+                        </a-row>
+                        
+                    </div> 
+                    
+                  </template> 
+                </a-table>
+                
+              </a-modal>
             </template> 
           </a-table>
         </v-flex>  
@@ -84,7 +112,7 @@ const columns = [
     sorter: (a, b) => a.driver.name.length - b.driver.name.length
   },
   {
-    title: "Alternative",
+    title: "Alternate",
     dataIndex: "operation",
     width: "20%",
     scopedSlots: { customRender: "operation" }
@@ -115,10 +143,14 @@ export default {
     return {
       data,
       columns,
+      allDriver: [],
       loading: false,
+      showModal: false,
       checkedShiftE: false,
       checkedShiftM: false,
       confirmLoading: false,
+      existShiftM: false,
+      existShiftE: false,
       alternateDriver: {
         driverId: "",
         attendanceDate: {
@@ -132,6 +164,17 @@ export default {
   methods: {
     moment,
     onChange,
+
+    handleCancel(e) {
+      this.showModal = false;
+    },
+    checkShifts(e) {
+      if (e.target.value == "M") {
+        this.checkedShiftM = e.target.checked;
+      } else {
+        this.checkedShiftE = e.target.checked;
+      }
+    },
     getAuthenticatedUser() {
       axios
         .get("/api/authenticated-user")
@@ -151,6 +194,7 @@ export default {
       axios.get("/api/get-drivers").then(async res => {
         if (res.data.success) {
           this.data = res.data.drivers;
+          this.allDriver = res.data.drivers;
           await this.checkTodayAttendedOrNot();
           this.loading = false;
         }
@@ -184,6 +228,33 @@ export default {
               });
             }
           });
+        });
+    },
+    async checkExistingShifts(driverId) {
+      await axios
+        .post("/api/get-todays-attendance", {
+          currentDate: moment().format("YYYY/MM/DD")
+        })
+        .then(async res => {
+          //console.log("Todays Attendance ", res.data);
+          let isMatched = await _.find(res.data, function(driver) {
+            return driver.attendance.driverId == driverId;
+          });
+          console.log(isMatched);
+          if (isMatched) {
+            isMatched.attendance.dates.map(item => {
+              if (item.date == moment().format("YYYY/MM/DD")) {
+                if (item.shifts.morning == true) {
+                  this.existShiftM = true;
+                } else if (item.shifts.evening == true) {
+                  this.existShiftE = true;
+                }
+              }
+            });
+          } else {
+            this.existShiftM = false;
+            this.existShiftE = false;
+          }
         });
     }
   },

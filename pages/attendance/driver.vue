@@ -11,7 +11,7 @@
               <div class='editable-row-operations'>
     
                   <a-row >
-                    <a-col :span="24"><a-checkbox @change="checkShirts" value="M">AM</a-checkbox> <a-checkbox value="E" @change="checkShirts">PM</a-checkbox></a-col>
+                    <a-col :span="24"><a-checkbox @change="checkShifts" value="M">AM</a-checkbox> <a-checkbox value="E" @change="checkShifts">PM</a-checkbox></a-col>
                   </a-row>
                
               </div> 
@@ -86,7 +86,7 @@ export default {
   methods: {
     moment,
     onChange,
-    checkShirts(e) {
+    checkShifts(e) {
       if (e.target.value == "M") {
         this.checkedShiftM = e.target.checked;
       } else {
@@ -137,7 +137,7 @@ export default {
             let isMatched = await _.find(res.data, function(driver) {
               return driver.attendance.driverId == item._id;
             });
-            console.log(isMatched);
+
             if (isMatched) {
               this.data.splice(index, 1);
               this.checkTodayAttendedOrNot();

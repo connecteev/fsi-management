@@ -3,8 +3,11 @@ const router = require('express').Router();
 // Require controller modules.
 let attendance_controller = require('../controllers/attendance')
 
-// POST request for handling user registration.
+// POST request for handling create attendance.
 router.post("/api/create-attendance", attendance_controller.create_attendance);
+
+// POST request for handling create alternative shifts.
+router.post("/api/create-alternative-shifts", attendance_controller.create_alternative_shifts);
 
 // GET request for fetching all attendances from DB
 router.get("/api/get-attendances", attendance_controller.get_attendances);
