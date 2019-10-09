@@ -71,7 +71,7 @@ import CircleStatistic from "@/components/widgets/statistic/CircleStatistic";
 import LinearStatistic from "@/components/widgets/statistic/LinearStatistic";
 import axios from "axios";
 import moment from "moment";
-
+let _ = require("lodash");
 const columns = [
   {
     title: "Name",
@@ -93,7 +93,6 @@ const columns = [
 
 const data = [];
 
-
 function onChange(pagination, filters, sorter) {
   console.log("params", pagination, filters, sorter);
 }
@@ -109,7 +108,7 @@ export default {
     ProfileCard,
     EChart,
     CircleStatistic,
-    LinearStatistic,
+    LinearStatistic
   },
   data() {
     this.cacheData = data.map(item => ({ ...item }));
@@ -129,9 +128,7 @@ export default {
       }
     };
   },
-  computed: {
-    
-  },
+  computed: {},
   methods: {
     moment,
     onChange,
@@ -149,14 +146,45 @@ export default {
           this.$message.error(error);
         });
     },
-    getDrivers() {
+    async getDrivers() {
       this.loading = true;
-      axios.get("/api/get-drivers").then(res => {
+      axios.get("/api/get-drivers").then(async res => {
         if (res.data.success) {
           this.data = res.data.drivers;
+          await this.checkTodayAttendedOrNot();
           this.loading = false;
         }
       });
+    },
+    async checkTodayAttendedOrNot() {
+      await axios
+        .post("/api/get-todays-attendance", {
+          currentDate: moment().format("YYYY/MM/DD")
+        })
+        .then(async res => {
+          //console.log("Todays Attendance ", res.data);
+          await this.data.map(async (item, index) => {
+            let isMatched = await _.find(res.data, function(driver) {
+              return driver.attendance.driverId == item._id;
+            });
+            console.log(isMatched, index);
+            if (isMatched) {
+              isMatched.attendance.dates.map(item => {
+                if (item.date == moment().format("YYYY/MM/DD")) {
+                  if (
+                    item.shifts.morning == true &&
+                    item.shifts.evening == true
+                  ) {
+                    this.data.splice(index, 1);
+                    this.checkTodayAttendedOrNot();
+                  } else {
+                    return false;
+                  }
+                }
+              });
+            }
+          });
+        });
     }
   },
   created() {

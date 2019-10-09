@@ -1,6 +1,10 @@
 
 
 # 
-GET http://localhost:3000/api/get-attendances
+GET http://localhost:3000/api/delete-all-attendances
+
+
+
+GET http://localhost:3000/api/delete-all-attendance
 
 POST http://localhost:3000/api/get_driver_attendance

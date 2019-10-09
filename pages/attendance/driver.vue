@@ -3,7 +3,7 @@
     <v-container grid-list-xl fluid>
       <v-layout row wrap>
         <v-flex lg12 sm12 xs12>
-          <h4>Attendance For {{ moment().format('LL') }}</h4>
+          <h4>Make Attendance For Today - {{ moment().format('LL') }}</h4>
           <a-table :columns="columns" :dataSource="data" @change="onChange" rowKey="_id" :loading="loading">
             <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
             
@@ -28,6 +28,7 @@
 <script>
 import axios from "axios";
 import moment from "moment";
+let _ = require("lodash");
 const columns = [
   {
     title: "Name",
@@ -55,7 +56,6 @@ const columns = [
 
 const data = [];
 
-
 function onChange(pagination, filters, sorter) {
   console.log("params", pagination, filters, sorter);
 }
@@ -70,6 +70,7 @@ export default {
       checkedShiftE: false,
       checkedShiftM: false,
       confirmLoading: false,
+      currentDate: moment().format("YYYY/MM/DD"),
       attendance: {
         driverId: "",
         attendanceDate: {
@@ -127,15 +128,33 @@ export default {
         })
         .catch(e => {});
     },
+    async checkTodayAttendedOrNot() {
+      await axios
+        .post("/api/get-todays-attendance", { currentDate: this.currentDate })
+        .then(async res => {
+          //console.log("Todays Attendance ", res.data);
+          await this.data.map(async (item, index) => {
+            let isMatched = await _.find(res.data, function(driver) {
+              return driver.attendance.driverId == item._id;
+            });
+            console.log(isMatched);
+            if (isMatched) {
+              this.data.splice(index, 1);
+              this.checkTodayAttendedOrNot();
+            }
+          });
+        });
+    },
     handleCancel(e) {
       console.log("Clicked cancel button");
       this.showAddDocModal = false;
     },
-    getDrivers() {
+    async getDrivers() {
       this.loading = true;
-      axios.get("/api/get-drivers").then(res => {
+      axios.get("/api/get-drivers").then(async res => {
         if (res.data.success) {
           this.data = res.data.drivers;
+          await this.checkTodayAttendedOrNot();
           this.loading = false;
         }
       });

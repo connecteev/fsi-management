@@ -20,4 +20,9 @@ router.post("/api/update-attendance", attendance_controller.update_attendance);
 // Delete a attendance
 router.post("/api/delete-attendance", attendance_controller.delete_attendance)
 
+// Delete all attendance
+router.get("/api/delete-all-attendance", attendance_controller.delete_all_attendance)
+
+
+
 module.exports = router;

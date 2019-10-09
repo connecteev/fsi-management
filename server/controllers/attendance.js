@@ -130,7 +130,7 @@ exports.update_attendance = function (req, res) {
 
 // Delete a attendance
 exports.delete_attendance = function (req, res) {
-  attendance.findByIdAndRemove(req.body.id).then(doc => {
+  Attendance.findByIdAndRemove(req.body.id).then(doc => {
     if (!doc) {
       return res.send({
         message: "attendance not found."
@@ -141,4 +141,9 @@ exports.delete_attendance = function (req, res) {
       message: "attendance deleted successfully"
     });
   });
+};
+
+// Delete all attendance
+exports.delete_all_attendance = function (req, res) {
+  Attendance.remove({})
 };
