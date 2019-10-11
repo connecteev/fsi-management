@@ -46,7 +46,7 @@
             <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
             
             <template slot="operation" slot-scope="text, record, index">
-              <a-button type="primary" @click="showModal = !showModal, checkExistingShifts(record._id)"><a-icon type="edit" /></a-button>
+              <a-button type="primary" @click="showModal = !showModal, checkExistingShifts(record._id, index)"><a-icon type="edit" /></a-button>
               <a-modal
                 title="Alternate Shifts"
                 :width="1000"
@@ -59,14 +59,12 @@
               </template>
                 <a-table :columns="columns" :dataSource="allDriver" @change="onChange" rowKey="_id" :loading="loading">
                   <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
-                  
-                  
                   <template slot="operation" slot-scope="text, record, index">
                     <div class='editable-row-operations'>
           
                         <a-row >
                           <a-col :span="16"><a-checkbox v-if="!existShiftM" @change="checkShifts" value="M">AM</a-checkbox> <a-checkbox v-if="!existShiftE" value="E" @change="checkShifts">PM</a-checkbox></a-col>
-                        <a-button type="primary" @click="alternateShifts(record._id, index)">Submit</a-button>
+                        <a-button type="primary" @click="addAlternateWork(record._id, index)">Submit</a-button>
                         </a-row>
                         
                     </div> 
@@ -151,20 +149,20 @@ export default {
       confirmLoading: false,
       existShiftM: false,
       existShiftE: false,
-      alternateDriver: {
-        driverId: "",
-        attendanceDate: {
+      alternativeShifts: {
+        alternativeWork: {
           date: "",
-          shifts: {}
+          shifts: {},
+          driverId: ""
         }
-      }
+      },
+      driverIndex: ""
     };
   },
   computed: {},
   methods: {
     moment,
     onChange,
-
     handleCancel(e) {
       this.showModal = false;
     },
@@ -174,6 +172,32 @@ export default {
       } else {
         this.checkedShiftE = e.target.checked;
       }
+    },
+    addAlternateWork(id, index) {
+      this.alternativeShifts.alternativeWork.date = moment().format(
+        "YYYY/MM/DD"
+      );
+      this.alternativeShifts.alternativeWork.shifts.morning = this.checkedShiftM;
+      this.alternativeShifts.alternativeWork.shifts.evening = this.checkedShiftE;
+      axios
+        .post("/api/create-alternative-shifts", {
+          driverId: id,
+          alternativeShifts: this.alternativeShifts
+        })
+        .then(res => {
+          if (res.data.success) {
+            this.data.splice(index, 1);
+            this.$message.success(res.data.message);
+            this.alternativeShifts.alternativeWork.date = "";
+            this.alternativeShifts.alternativeWork.shifts.morning = false;
+            this.alternativeShifts.alternativeWork.shifts.evening = false;
+            this.checkedShiftM = false;
+            this.checkedShiftE = false;
+            this.data.splice(this.driverIndex, 1);
+            this.showModal = false;
+          }
+        })
+        .catch(e => {});
     },
     getAuthenticatedUser() {
       axios
@@ -194,8 +218,17 @@ export default {
       axios.get("/api/get-drivers").then(async res => {
         if (res.data.success) {
           this.data = res.data.drivers;
-          this.allDriver = res.data.drivers;
           await this.checkTodayAttendedOrNot();
+          await this.getAllAttendence();
+          this.loading = false;
+        }
+      });
+    },
+    async getAllDrivers() {
+      this.loading = true;
+      axios.get("/api/get-drivers").then(async res => {
+        if (res.data.success) {
+          this.allDriver = res.data.drivers;
           this.loading = false;
         }
       });
@@ -207,11 +240,11 @@ export default {
         })
         .then(async res => {
           //console.log("Todays Attendance ", res.data);
+
           await this.data.map(async (item, index) => {
             let isMatched = await _.find(res.data, function(driver) {
               return driver.attendance.driverId == item._id;
             });
-            console.log(isMatched, index);
             if (isMatched) {
               isMatched.attendance.dates.map(item => {
                 if (item.date == moment().format("YYYY/MM/DD")) {
@@ -230,7 +263,30 @@ export default {
           });
         });
     },
-    async checkExistingShifts(driverId) {
+    async getAllAttendence() {
+      axios.get("/api/get-attendances").then(async res => {
+        await this.data.map(async (item, index) => {
+          let isMatched = await _.find(res.data.attendances, function(
+            attendance
+          ) {
+            attendance.attendance.alternativeShifts.map(async element => {
+              if (
+                element.alternativeWork.date == moment().format("YYYY/MM/DD") &&
+                element.alternativeWork.driverId == item._id
+              ) {
+                await removeMatchedDriver(index);
+              }
+            });
+          });
+        });
+      });
+      const removeMatchedDriver = index => {
+        return this.data.splice(index, 1);
+      };
+    },
+    async checkExistingShifts(driverId, index) {
+      this.driverIndex = index;
+      this.alternativeShifts.alternativeWork.driverId = driverId;
       await axios
         .post("/api/get-todays-attendance", {
           currentDate: moment().format("YYYY/MM/DD")
@@ -261,6 +317,8 @@ export default {
   created() {
     this.getAuthenticatedUser();
     this.getDrivers();
+    this.getAllDrivers();
+    this.getAllAttendence();
   }
 };
 </script>

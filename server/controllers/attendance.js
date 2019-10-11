@@ -70,13 +70,13 @@ exports.create_alternative_shifts = function (req, res) {
           .then(item => {
             res.json({
               success: true,
-              message: "Attendance added successfully.",
+              message: "Alternate driver work added successfully.",
               item
             });
           })
           .catch(err => {
             res.json({
-              message: "Unable to add attendance.",
+              message: "Unable to add Alternate driver work.",
               err
             });
           });

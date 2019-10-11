@@ -137,7 +137,7 @@ export default {
             let isMatched = await _.find(res.data, function(driver) {
               return driver.attendance.driverId == item._id;
             });
-
+            console.log(isMatched);
             if (isMatched) {
               this.data.splice(index, 1);
               this.checkTodayAttendedOrNot();
