@@ -63,6 +63,7 @@ module.exports = {
     '@/plugins/vuetify',
     '@/plugins/vee-validate',
     '@/plugins/antd-ui',
+    '@/plugins/vue-html-to-paper'
 
   ],
 

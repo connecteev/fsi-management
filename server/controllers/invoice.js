@@ -8,13 +8,12 @@ let Attendance = require("../model/attendance");
 let Driver = require("../model/driver");
 
 // Handle - generate monthly invoices
-exports.generate_invoices = function(req, res) {
+exports.generate_invoices = function (req, res) {
   // generate monthly invoices
-  Attendance.findOne(
-    {
+  Attendance.findOne({
       "attendance.driverId": req.body.driverId
     },
-    function(err, attendance) {
+    function (err, attendance) {
       if (err) {
         return res.send(err);
       }
@@ -61,15 +60,16 @@ exports.generate_invoices = function(req, res) {
           }
         });
 
-        res.json({
+        res.send({
+          success: true,
           totalShiftsPerMonth,
           totalMonthlyAlternativeWorks,
           totalMonthlyWork,
           totalAlternativeShiftsPerMonth
         });
       } else {
-        res.status(200).send({
-          message: "Unable to find user"
+        res.send({
+          message: "No attendance found!"
         });
       }
     }

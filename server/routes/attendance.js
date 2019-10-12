@@ -8,10 +8,8 @@ router.post("/api/create-attendance", attendance_controller.create_attendance);
 
 // POST request for handling create alternative shifts.
 router.post("/api/create-alternative-shifts", attendance_controller.create_alternative_shifts);
-
 // GET request for fetching all attendances from DB
 router.get("/api/get-attendances", attendance_controller.get_attendances);
-
 // Get request to find a single driver attendance
 router.post("/api/get-driver-attendance", attendance_controller.get_driver_attendance);
 
@@ -25,7 +23,5 @@ router.post("/api/delete-attendance", attendance_controller.delete_attendance)
 
 // Delete all attendance
 router.get("/api/delete-all-attendance", attendance_controller.delete_all_attendance)
-
-
 
 module.exports = router;
