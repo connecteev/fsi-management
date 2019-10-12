@@ -4,6 +4,7 @@ module.exports = function (app) {
   const childRoutes = require('./child')
   const attendanceRoutes = require('./attendance')
   const paRoutes = require('./passengerAssistant')
-  const fileUploadRoutes = require('./fileUpload')
-  app.use(userRoutes, driverRoutes, childRoutes, paRoutes, fileUploadRoutes, attendanceRoutes);
+  const fileUploadRoutes = require('./fileUpload');
+  const invoiceRoutes = require('./invoice');
+  app.use(userRoutes, driverRoutes, childRoutes, paRoutes, fileUploadRoutes, attendanceRoutes, invoiceRoutes);
 };

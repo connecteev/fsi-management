@@ -1,6 +1,5 @@
 // load up the driver model
 let Driver = require("../model/driver");
-
 // Handle - create driver with data from the client app on POST request
 exports.create_driver = function (req, res) {
   // Create a new driver
