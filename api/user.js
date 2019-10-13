@@ -1,12 +1,11 @@
-const Items =  [
-  {
+const Items = [{
     'uuid': '65a6eb21-67b5-45c3-9af7-faca2d9b60d4',
     'name': 'Dessie',
     'email': 'Dessie7937@gmail.com',
     'username': 'Dessie79',
     'jobTitle': 'Web Developer',
     'phone': '1-360-812-9380 x511',
-    'avatar': require('@/static/avatar/a2.jpg'),
+    'avatar': 'https://dummyimage.com/600x400/000/fff',
     'address': {
       'street': '655 Archibald Groves',
       'suite': 'Apt. 818',
@@ -27,7 +26,7 @@ const Items =  [
     'email': 'Jakayla_Crooks867@yahoo.com',
     'username': 'Jakayla_Crooks86',
     'phone': '610.499.1240',
-    'avatar': require('@/static/avatar/a3.jpg'),
+    'avatar': 'https://dummyimage.com/600x400/000/fff',
     'address': {
       'street': '281 Tillman Forge',
       'suite': 'Apt. 381',
@@ -48,7 +47,7 @@ const Items =  [
     'email': 'Hobart_Mueller.Thiel@hotmail.com',
     'username': 'Hobart_Mueller',
     'phone': '1-590-385-3349',
-    'avatar': require('@/static/avatar/a1.jpg'),
+    'avatar': 'https://dummyimage.com/600x400/000/fff',
     'address': {
       'street': '706 Padberg Knoll',
       'suite': 'Suite 818',
@@ -69,7 +68,7 @@ const Items =  [
     'email': 'Celestine.Casper59@hotmail.com',
     'username': 'Celestine.Casper',
     'phone': '1-830-046-3289',
-    'avatar': require('@/static/avatar/a4.jpg'),
+    'avatar': 'https://dummyimage.com/600x400/000/fff',
     'address': {
       'street': '9528 Schroeder Track',
       'suite': 'Apt. 443',
