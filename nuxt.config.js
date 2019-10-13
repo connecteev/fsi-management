@@ -34,7 +34,8 @@ module.exports = {
       }
     ],
     script: [{
-      src: 'https://cdnjs.cloudflare.com/ajax/libs/echarts/4.0.4/echarts-en.min.js'
+      src: 'https://cdnjs.cloudflare.com/ajax/libs/echarts/4.0.4/echarts-en.min.js',
+      src: 'https://printjs-4de6.kxcdn.com/print.min.js'
     }]
   },
 
@@ -53,7 +54,8 @@ module.exports = {
     '~/assets/style/app.styl',
     'font-awesome/css/font-awesome.css',
     'roboto-fontface/css/roboto/roboto-fontface.css',
-    'ant-design-vue/dist/antd.css'
+    'ant-design-vue/dist/antd.css',
+    'print-js/dist/print.css'
   ],
 
   /*
@@ -63,7 +65,7 @@ module.exports = {
     '@/plugins/vuetify',
     '@/plugins/vee-validate',
     '@/plugins/antd-ui',
-    '@/plugins/vue-html-to-paper'
+
 
   ],
 

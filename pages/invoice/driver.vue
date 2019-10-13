@@ -33,7 +33,10 @@
           >
             <template slot="footer">
               <a-button key="back" @click="handleCancel">Return</a-button>
-              <a-button  type="primary" @click="print">
+              
+              <a-button  type="primary"  v-if="printReady"
+        
+                onclick="printJS('printMe', 'html')">
                 Print
               </a-button>
             </template>
@@ -141,6 +144,7 @@
 </template>
 <script>
 import axios from "axios";
+import print from "print-js";
 
 const columns = [
   {
@@ -202,7 +206,8 @@ export default {
       driverInfo: {},
       startDate: "",
       endDate: "",
-      invoiceInfo: {}
+      invoiceInfo: {},
+      printReady: false
     };
   },
   beforeCreate() {
@@ -210,6 +215,7 @@ export default {
   },
   methods: {
     onChange,
+
     getCurrentStyle(current, today) {
       const style = {};
       if (current.date() === 1) {
@@ -225,15 +231,10 @@ export default {
       this.startDate = dateString[0];
       this.endDate = dateString[1];
     },
-    print() {
-      // Pass the element id here
-      //this.$htmlToPaper("printMe");
-      // var printContents = document.getElementById("#printMe").innerHTML;
-      // var originalContents = document.body.innerHTML;
-      // document.body.innerHTML = printContents;
-      // window.print();
-      // document.body.innerHTML = originalContents;
-    },
+    // print() {
+    //   // Pass the element id here
+    //   printJs("printMe", "html");
+    // },
     generateInvoice(driver, driverId) {
       this.driverInfo = driver;
       axios
@@ -263,24 +264,16 @@ export default {
   },
   created() {
     this.getDrivers();
+  },
+
+  mounted() {
+    import("print-js").then(() => {
+      this.printReady = true;
+    });
   }
 };
 </script>
 <style scoped>
-@media print {
-  body * {
-    visibility: hidden;
-  }
-  #printMe,
-  #printMe * {
-    visibility: visible;
-  }
-  #printMe {
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
-}
 .editable-row-operations a {
   margin-right: 8px;
 }
