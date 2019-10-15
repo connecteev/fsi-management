@@ -74,6 +74,7 @@ module.exports = {
    */
   modules: [],
 
+
   /*
    ** Build configuration
    */
@@ -92,6 +93,9 @@ module.exports = {
     extend(config, ctx) {
 
     }
+  },
+  optimization: {
+    minimize: false
   },
   serverMiddleware: ['~/api/index.js']
 }
