@@ -11,7 +11,7 @@ let Driver = require("../model/driver");
 exports.generate_invoices = function (req, res) {
   // generate monthly invoices
   Attendance.findOne({
-      "attendance.driverId": req.body.driverId
+      "attendance.userId": req.body.userId
     },
     function (err, attendance) {
       if (err) {

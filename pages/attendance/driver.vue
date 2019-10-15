@@ -72,7 +72,7 @@ export default {
       confirmLoading: false,
       currentDate: moment().format("YYYY/MM/DD"),
       attendance: {
-        driverId: "",
+        userId: "",
         attendanceDate: {
           date: "",
           shifts: {}
@@ -109,7 +109,7 @@ export default {
         });
     },
     addAttendance(id, index) {
-      this.attendance.driverId = id;
+      this.attendance.userId = id;
       this.attendance.attendanceDate.date = moment().format("YYYY/MM/DD");
       this.attendance.attendanceDate.shifts.morning = this.checkedShiftM;
       this.attendance.attendanceDate.shifts.evening = this.checkedShiftE;
@@ -132,22 +132,41 @@ export default {
       await axios
         .post("/api/get-todays-attendance", { currentDate: this.currentDate })
         .then(async res => {
-          //console.log("Todays Attendance ", res.data);
           await this.data.map(async (item, index) => {
             let isMatched = await _.find(res.data, function(driver) {
-              return driver.attendance.driverId == item._id;
+              return driver.attendance.userId == item._id;
             });
-            console.log(isMatched);
             if (isMatched) {
               this.data.splice(index, 1);
+
               this.checkTodayAttendedOrNot();
             }
           });
         });
     },
     handleCancel(e) {
-      console.log("Clicked cancel button");
       this.showAddDocModal = false;
+    },
+    async getAllAttendence() {
+      axios.get("/api/get-attendances").then(async res => {
+        await this.data.map(async (item, index) => {
+          let isMatched = await _.find(res.data.attendances, function(
+            attendance
+          ) {
+            attendance.attendance.alternativeShifts.map(async element => {
+              if (
+                element.alternativeWork.date == moment().format("YYYY/MM/DD") &&
+                element.alternativeWork.userId == item._id
+              ) {
+                await removeMatchedUser(index);
+              }
+            });
+          });
+        });
+      });
+      const removeMatchedUser = index => {
+        return this.data.splice(index, 1);
+      };
     },
     async getDrivers() {
       this.loading = true;
@@ -155,6 +174,7 @@ export default {
         if (res.data.success) {
           this.data = res.data.drivers;
           await this.checkTodayAttendedOrNot();
+          await this.getAllAttendence();
           this.loading = false;
         }
       });
@@ -162,6 +182,7 @@ export default {
   },
   created() {
     this.getDrivers();
+    this.getAllAttendence();
   }
 };
 </script>

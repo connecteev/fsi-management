@@ -41,12 +41,12 @@
         </v-flex>
         <!-- mini statistic  end --> 
         <v-flex lg12 sm12 xs12>
-          <h4>Absent Today - {{ moment().format('LL') }}</h4>
+          <h4>Driver Absent Today - {{ moment().format('LL') }}</h4>
           <a-table :columns="columns" :dataSource="data" @change="onChange" rowKey="_id" :loading="loading">
             <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
             
             <template slot="operation" slot-scope="text, record, index">
-              <a-button type="primary" @click="showModal = !showModal, checkExistingShifts(record._id, index)"><a-icon type="edit" /></a-button>
+              <a-button type="primary" @click="showModal = !showModal, checkExistingShifts(record._id, index, 'driver')"><a-icon type="edit" /></a-button>
               <a-modal
                 title="Alternate Shifts"
                 :width="1000"
@@ -76,6 +76,42 @@
             </template> 
           </a-table>
         </v-flex>  
+        <v-flex lg12 sm12 xs12>
+          <h4>PA Absent Today - {{ moment().format('LL') }}</h4>
+          <a-table :columns="paColumns" :dataSource="paData" @change="onChange" rowKey="_id" :loading="loading">
+            <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
+            
+            <template slot="operation" slot-scope="text, record, index">
+              <a-button type="primary" @click="showPaModal = !showPaModal, checkExistingShifts(record._id, index, 'pa')"><a-icon type="edit" /></a-button>
+              <a-modal
+                title="Alternate Shifts"
+                :width="1000"
+                :visible="showPaModal"
+                v-model="showPaModal"
+              >
+              <template slot="footer">
+                <a-button key="back" type="primary" @click="handleCancel">Return</a-button>
+              
+              </template>
+                <a-table :columns="paColumns" :dataSource="allPa" @change="onChange" rowKey="_id" :loading="loading">
+                  <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
+                  <template slot="operation" slot-scope="text, record, index">
+                    <div class='editable-row-operations'>
+          
+                        <a-row >
+                          <a-col :span="16"><a-checkbox v-if="!existShiftM" @change="checkShifts" value="M">AM</a-checkbox> <a-checkbox v-if="!existShiftE" value="E" @change="checkShifts">PM</a-checkbox></a-col>
+                        <a-button type="primary" @click="addAlternateWork(record._id, index)">Submit</a-button>
+                        </a-row>
+                        
+                    </div> 
+                    
+                  </template> 
+                </a-table>
+                
+              </a-modal>
+            </template> 
+          </a-table>
+        </v-flex>  
       </v-layout>
     </v-container>
   </div>
@@ -83,7 +119,7 @@
 
 <script>
 import API from "@/api";
-import EChart from "@/components/chart/echart";
+
 import MiniStatistic from "@/components/widgets/statistic/MiniStatistic";
 import PostListCard from "@/components/widgets/card/PostListCard";
 import ProfileCard from "@/components/widgets/card/ProfileCard";
@@ -116,13 +152,30 @@ const columns = [
     scopedSlots: { customRender: "operation" }
   }
 ];
-
+const paColumns = [
+  {
+    title: "Name",
+    dataIndex: "pa.name",
+    width: "20%",
+    scopedSlots: { customRender: "name" },
+    // specify the condition of filtering result
+    // here is that finding the name started with `value`
+    onFilter: (value, record) => record.name.indexOf(value) === 0,
+    sorter: (a, b) => a.driver.name.length - b.driver.name.length
+  },
+  {
+    title: "Alternate",
+    dataIndex: "operation",
+    width: "20%",
+    scopedSlots: { customRender: "operation" }
+  }
+];
 const data = [];
 
 function onChange(pagination, filters, sorter) {
   console.log("params", pagination, filters, sorter);
 }
-
+const paData = [];
 export default {
   layout: "dashboard",
   components: {
@@ -132,31 +185,38 @@ export default {
     PostSingleCard,
     PostListCard,
     ProfileCard,
-    EChart,
+
     CircleStatistic,
     LinearStatistic
   },
   data() {
     this.cacheData = data.map(item => ({ ...item }));
+    this.cacheData = paData.map(item => ({ ...item }));
     return {
       data,
       columns,
+      paColumns,
+      paData,
       allDriver: [],
+      allPa: [],
       loading: false,
       showModal: false,
+      showPaModal: false,
       checkedShiftE: false,
       checkedShiftM: false,
       confirmLoading: false,
       existShiftM: false,
       existShiftE: false,
+      isDriver: false,
+      isPa: false,
       alternativeShifts: {
         alternativeWork: {
           date: "",
           shifts: {},
-          driverId: ""
+          userId: ""
         }
       },
-      driverIndex: ""
+      userIndex: ""
     };
   },
   computed: {},
@@ -181,20 +241,27 @@ export default {
       this.alternativeShifts.alternativeWork.shifts.evening = this.checkedShiftE;
       axios
         .post("/api/create-alternative-shifts", {
-          driverId: id,
+          userId: id,
           alternativeShifts: this.alternativeShifts
         })
         .then(res => {
           if (res.data.success) {
-            this.data.splice(index, 1);
             this.$message.success(res.data.message);
             this.alternativeShifts.alternativeWork.date = "";
             this.alternativeShifts.alternativeWork.shifts.morning = false;
             this.alternativeShifts.alternativeWork.shifts.evening = false;
             this.checkedShiftM = false;
             this.checkedShiftE = false;
-            this.data.splice(this.driverIndex, 1);
             this.showModal = false;
+            this.showPaModal = false;
+            if (isDriver) {
+              this.data.splice(this.userIndex, 1);
+              this.isDriver = false;
+            }
+            if (isPa) {
+              this.paData.splice(this.userIndex, 1);
+              this.isPa = false;
+            }
           }
         })
         .catch(e => {});
@@ -228,7 +295,8 @@ export default {
       this.loading = true;
       axios.get("/api/get-drivers").then(async res => {
         if (res.data.success) {
-          this.allDriver = res.data.drivers;
+          this.allDriver = await res.data.drivers;
+          await this.getAllAttendence();
           this.loading = false;
         }
       });
@@ -240,10 +308,10 @@ export default {
         })
         .then(async res => {
           //console.log("Todays Attendance ", res.data);
-
+          // checking driver attendance
           await this.data.map(async (item, index) => {
             let isMatched = await _.find(res.data, function(driver) {
-              return driver.attendance.driverId == item._id;
+              return driver.attendance.userId == item._id;
             });
             if (isMatched) {
               isMatched.attendance.dates.map(item => {
@@ -253,6 +321,27 @@ export default {
                     item.shifts.evening == true
                   ) {
                     this.data.splice(index, 1);
+                    this.checkTodayAttendedOrNot();
+                  } else {
+                    return false;
+                  }
+                }
+              });
+            }
+          });
+          // checking pa attendance
+          await this.paData.map(async (item, index) => {
+            let isMatched = await _.find(res.data, function(driver) {
+              return driver.attendance.userId == item._id;
+            });
+            if (isMatched) {
+              isMatched.attendance.dates.map(item => {
+                if (item.date == moment().format("YYYY/MM/DD")) {
+                  if (
+                    item.shifts.morning == true &&
+                    item.shifts.evening == true
+                  ) {
+                    this.paData.splice(index, 1);
                     this.checkTodayAttendedOrNot();
                   } else {
                     return false;
@@ -272,31 +361,55 @@ export default {
             attendance.attendance.alternativeShifts.map(async element => {
               if (
                 element.alternativeWork.date == moment().format("YYYY/MM/DD") &&
-                element.alternativeWork.driverId == item._id
+                element.alternativeWork.userId == item._id
               ) {
-                await removeMatchedDriver(index);
+                await removeMatchedUser(index, "driverData");
+              }
+            });
+          });
+        });
+        await this.paData.map(async (item, index) => {
+          let isMatched = await _.find(res.data.attendances, function(
+            attendance
+          ) {
+            attendance.attendance.alternativeShifts.map(async element => {
+              if (
+                element.alternativeWork.date == moment().format("YYYY/MM/DD") &&
+                element.alternativeWork.userId == item._id
+              ) {
+                await removeMatchedUser(index, "pa");
               }
             });
           });
         });
       });
-      const removeMatchedDriver = index => {
-        return this.data.splice(index, 1);
+      const removeMatchedUser = (index, userType) => {
+        if (userType == "pa") {
+          return this.paData.splice(index, 1);
+        } else {
+          return this.data.splice(index, 1);
+        }
       };
     },
-    async checkExistingShifts(driverId, index) {
-      this.driverIndex = index;
-      this.alternativeShifts.alternativeWork.driverId = driverId;
+    async checkExistingShifts(userId, index, userType) {
+      if (userType == "driver") {
+        this.isDriver = true;
+      } else {
+        this.isPa = true;
+      }
+
+      this.userIndex = index;
+      this.alternativeShifts.alternativeWork.userId = userId;
       await axios
         .post("/api/get-todays-attendance", {
           currentDate: moment().format("YYYY/MM/DD")
         })
         .then(async res => {
-          //console.log("Todays Attendance ", res.data);
+          //checking driver existing shifts
           let isMatched = await _.find(res.data, function(driver) {
-            return driver.attendance.driverId == driverId;
+            return driver.attendance.userId == userId;
           });
-          console.log(isMatched);
+
           if (isMatched) {
             isMatched.attendance.dates.map(item => {
               if (item.date == moment().format("YYYY/MM/DD")) {
@@ -312,6 +425,26 @@ export default {
             this.existShiftE = false;
           }
         });
+    },
+    async getPa() {
+      this.loading = true;
+      axios.get("/api/get-all-pa").then(async res => {
+        if (res.data.success) {
+          this.paData = await res.data.pas;
+          await this.getAllAttendence();
+          this.loading = false;
+        }
+      });
+    },
+    getAllPa() {
+      this.loading = true;
+      axios.get("/api/get-all-pa").then(res => {
+        if (res.data.success) {
+          this.allPa = res.data.pas;
+
+          this.loading = false;
+        }
+      });
     }
   },
   created() {
@@ -319,6 +452,8 @@ export default {
     this.getDrivers();
     this.getAllDrivers();
     this.getAllAttendence();
+    this.getPa();
+    this.getAllPa();
   }
 };
 </script>

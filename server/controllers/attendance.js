@@ -5,7 +5,7 @@ let Attendance = require("../model/attendance");
 exports.create_attendance = function (req, res) {
   // Create a new attendance
   Attendance.findOne({
-      "attendance.driverId": req.body.driverId
+      "attendance.userId": req.body.userId
     },
     function (err, attendance) {
       if (err) {
@@ -30,7 +30,7 @@ exports.create_attendance = function (req, res) {
           });
       } else {
         let attendanceData = new Attendance();
-        attendanceData.attendance.driverId = req.body.driverId;
+        attendanceData.attendance.userId = req.body.userId;
         attendanceData.attendance.dates.push(req.body.attendanceDate);
         attendanceData.attendance.createdAt = Date.now();
         attendanceData
@@ -57,7 +57,7 @@ exports.create_attendance = function (req, res) {
 exports.create_alternative_shifts = function (req, res) {
   // Create a new attendance
   Attendance.findOne({
-      "attendance.driverId": req.body.driverId
+      "attendance.userId": req.body.userId
     },
     function (err, attendance) {
       if (err) {
@@ -83,7 +83,7 @@ exports.create_alternative_shifts = function (req, res) {
       }
       // else {
       //   let attendanceData = new Attendance();
-      //   attendanceData.attendance.driverId = req.body.driverId;
+      //   attendanceData.attendance.userId = req.body.userId;
       //   attendanceData.attendance.dates.push(req.body.attendanceDate);
       //   attendanceData.attendance.createdAt = Date.now();
       //   attendanceData
@@ -119,10 +119,10 @@ exports.get_attendances = function (req, res) {
     });
 };
 
-// Get a single driver attendance by driverId
+// Get a single driver attendance by userId
 exports.get_driver_attendance = function (req, res) {
   Attendance.findOne({
-    "attendance.driverId": req.body.driverId
+    "attendance.userId": req.body.userId
   }).then(attendance => {
     if (!attendance) {
       return res.send("No attendance found");

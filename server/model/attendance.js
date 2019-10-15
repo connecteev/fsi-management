@@ -5,7 +5,7 @@ var mongoose = require("mongoose");
 // define the schema for our attendance model
 var attendanceSchema = mongoose.Schema({
   attendance: {
-    driverId: String,
+    userId: String,
     dates: [],
     alternativeShifts: [],
     createdAt: {
