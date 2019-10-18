@@ -11,7 +11,7 @@
         <img src="" alt="">
         <img
             :alt="items.document.documentName"
-            :src="docImage(index)"
+            :src="require('../../uploads/' + docImage(index))"
             slot="cover"
             height="180"
         />
@@ -45,7 +45,9 @@
         
       </a-col>
     </a-row>
-      
+    <div v-else class="ma-4">
+      <h2>No Documents found.</h2>
+    </div>
   </div>
 </template>
 
@@ -59,23 +61,13 @@ export default {
       userDocs: []
     };
   },
-  computed: {
-    //docImage: function() {
-    // let imgPath = this.userDocs[0].document.documentPath;
-    // imgPath = imgPath.substring(imgPath.indexOf("/") + 1);
-    // return require(`../../uploads/${imgPath}`);
-    // //return require(`../../${this.userDocs[0].document.documentPath}`);
-    // if (userDocs.length > 0)
-    //   return console.log(userDocs[0].document.documentPath);
-    // // Request the image as a webpack module by using `require`
-    // return require(`../../uploads/2019-09-05T22:10:29.405Zaaa.jpg`);
-    //}
-  },
+
   methods: {
     docImage(index) {
       let imgPath = this.userDocs[index].document.documentPath;
       imgPath = imgPath.substring(imgPath.indexOf("/") + 1);
-      return require(`../../uploads/${imgPath}`);
+      return imgPath;
+      require(`../../uploads/${imgPath}`);
     },
     deleteDoc(id) {
       axios.post("/api/delete-document", { id }).then(res => {

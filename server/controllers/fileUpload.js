@@ -1,49 +1,51 @@
 // load up the file upload model
 let FileUpload = require("../model/fileUpload");
+const fs = require('fs')
 
 
 // Handle - add document  from the client app on POST request
 exports.add_document = function (req, res) {
   // Upload a new document 
-  FileUpload.findOne({
-      "document.documentName": req.body.documentName
-    },
-    function (err, document) {
-      if (err) {
-        return res.send(err);
-      }
-      if (document) {
-        return res.send({
-          message: "This document name is already exist."
-        });
-      } else {
-        let fileData = new FileUpload();
-        fileData.document.documentName = req.body.documentName;
-        fileData.document.userId = req.body.userId;
-        fileData.document.userName = req.body.userName;
-        fileData.document.expiryDate = req.body.expiryDate;
-        fileData.document.redAlertDate = req.body.redAlertDate;
-        fileData.document.greenAlertDate = req.body.greenAlertDate;
-        fileData.document.documentPath = req.file.path;
-        fileData.document.status = req.body.status;
-        fileData.document.createdAt = Date.now();
+  // FileUpload.findOne({
+  //     "document.documentName": req.body.documentName
+  //   },
+  //   function (err, document) {
+  //     if (err) {
+  //       return res.send(err);
+  //     }
+  //     if (document) {
+  //       return res.send({
+  //         message: "This document name is already exist."
+  //       });
+  //     } else {
 
-        fileData
-          .save()
-          .then(item => {
-            res.send({
-              success: true,
-              message: "Saved successfully.",
-              item
-            });
-          })
-          .catch(err => {
-            console.log(err);
-            res.status(400).send("unable to save user to database");
-          });
-      }
-    }
-  );
+  //     }
+  //   }
+  // );
+  let fileData = new FileUpload();
+  fileData.document.documentName = req.body.documentName;
+  fileData.document.userId = req.body.userId;
+  fileData.document.userName = req.body.userName;
+  fileData.document.expiryDate = req.body.expiryDate;
+  fileData.document.redAlertDate = req.body.redAlertDate;
+  fileData.document.greenAlertDate = req.body.greenAlertDate;
+  fileData.document.documentPath = req.file.path;
+  fileData.document.status = req.body.status;
+  fileData.document.createdAt = Date.now();
+
+  fileData
+    .save()
+    .then(item => {
+      res.send({
+        success: true,
+        message: "Saved successfully.",
+        item
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(400).send("unable to save user to database");
+    });
 };
 // get single user all documents
 exports.get_user_document = function (req, res) {
@@ -85,6 +87,7 @@ exports.update_document = function (req, res) {
       return res.send({
         message: 'Document not found.'
       })
+    fs.unlinkSync(doc.document.documentPath);
     doc.document.documentName = req.body.documentName;
     doc.document.userId = req.body.userId;
     doc.document.userName = req.body.userName;
@@ -124,6 +127,7 @@ exports.delete_document = function (req, res) {
         message: 'Document not found.'
       })
     }
+    fs.unlinkSync(doc.document.documentPath);
     res.send({
       success: true,
       message: 'Document deleted successfully'

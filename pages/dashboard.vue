@@ -3,7 +3,7 @@
     <v-container grid-list-xl fluid>
       <v-layout row wrap>
         <!-- mini statistic start -->
-        <v-flex lg3 sm6 xs12>
+        <!-- <v-flex lg3 sm6 xs12>
           <mini-statistic
             icon="fa fa-facebook"
             title="100+"
@@ -38,7 +38,7 @@
             color="purple"
           >
           </mini-statistic>
-        </v-flex>
+        </v-flex> -->
         <!-- mini statistic  end --> 
         <v-flex lg12 sm12 xs12>
           <h4>Driver Absent Today - {{ moment().format('LL') }}</h4>

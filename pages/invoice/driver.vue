@@ -235,11 +235,11 @@ export default {
     //   // Pass the element id here
     //   printJs("printMe", "html");
     // },
-    generateInvoice(driver, driverId) {
+    generateInvoice(driver, userId) {
       this.driverInfo = driver;
       axios
         .post("/api/generate-invoice", {
-          driverId,
+          userId,
           startDate: this.startDate,
           endDate: this.endDate
         })
