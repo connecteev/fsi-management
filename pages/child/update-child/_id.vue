@@ -4,7 +4,7 @@
       <v-layout row wrap>
         <v-flex lg12 sm12 xs12 >
             <h3 class="text-xs-center">Edit child details</h3>
-            <a-form
+            <a-form 
                 class="v-card v-sheet theme--light pt-5 pr-5"
                 :form="form"
                 @submit="handleSubmit"
@@ -16,6 +16,7 @@
                         v-bind="formItemLayout"
                         label="Full Name"
                         >
+                        
                         <a-input
                             v-decorator="[
                             'name',
@@ -26,6 +27,100 @@
                             }
                             ]"
                         />
+                        </a-form-item>
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Dad Number"
+                        >
+                            <a-input
+                                v-decorator="[
+                                'dadPhone',
+                                {
+                                    rules: [{ required: true, message: 'Please input dad number!' }],
+                                }
+                                ]"
+                              
+                            >
+                            </a-input>
+                        </a-form-item>
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Mom Number"
+                        >
+                            <a-input
+                                v-decorator="[
+                                'momphone',
+                                {
+                                    rules: [{ required: true, message: 'Please input mom number!' }],
+                                }
+                                ]"
+                                
+                            >
+                            </a-input>
+                        </a-form-item>
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Home Landline"
+                        >
+                            <a-input
+                
+                                v-decorator="[
+                                'landline',
+                                {
+                                    rules: [{
+                                        required: true, message: 'Please enter home landline number!',
+                                    }]
+                                }
+                                ]"
+                            >
+                            </a-input>
+                        </a-form-item>
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Address"
+                        >
+                            <a-input
+                                
+                                v-decorator="[
+                                'address',
+                                {
+                                    rules: [{
+                                        required: true, message: 'Please enter child address!',
+                                    }]
+                                }
+                                ]"
+                            >
+                            </a-input>
+                        </a-form-item>
+                         <a-form-item
+                        v-bind="formItemLayout"
+                        label="Postal Code"
+                        >
+                            <a-input
+                                v-model="child.address.postalCode"
+                                style="width: 100%"
+                            >
+                            </a-input>
+                        </a-form-item>
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Town"
+                        >
+                            <a-input
+                                v-model="child.address.town"
+                                style="width: 100%"
+                            >
+                            </a-input>
+                        </a-form-item>
+                    
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="County"
+                        >
+                            <a-input
+                                v-model="child.address.country"
+                            >
+                            </a-input>
                         </a-form-item>
                         <a-form-item
                         v-bind="formItemLayout"
@@ -58,103 +153,8 @@
                             </div>
                            
                         </a-form-item>
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Dad Number"
-                        >
-                            <a-input
-                                v-decorator="[
-                                'dadPhone',
-                                {
-                                    rules: [{ required: true, message: 'Please input dad number!' }],
-                                }
-                                ]"
-                                style="width: 100%"
-                            >
-                            </a-input>
-                        </a-form-item>
                         
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Mom Number"
-                        >
-                            <a-input
-                                v-decorator="[
-                                'momPhone',
-                                {
-                                    rules: [{ required: true, message: 'Please input mom number!' }],
-                                }
-                                ]"
-                                style="width: 100%"
-                            >
-                            </a-input>
-                        </a-form-item>
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Home Landline"
-                        >
-                            <a-input
-                
-                                v-decorator="[
-                                'landline',
-                                {
-                                    rules: [{
-                                        required: true, message: 'Please enter home landline number!',
-                                    }]
-                                }
-                                ]"
-                            >
-                            </a-input>
-                        </a-form-item>
-                         <a-form-item
-                        v-bind="formItemLayout"
-                        label="Postal Code"
-                        >
-                            <a-input
-                                v-model="child.address.postalCode"
-                                style="width: 100%"
-                            >
-                            </a-input>
-                        </a-form-item>
-                    
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Address"
-                        >
-                            <a-input
-                                
-                                v-decorator="[
-                                'address',
-                                {
-                                    rules: [{
-                                        required: true, message: 'Please enter child address!',
-                                    }]
-                                }
-                                ]"
-                            >
-                            </a-input>
-                        </a-form-item>
-                   
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Town"
-                        >
-                            <a-input
-                                v-model="child.address.town"
-                                style="width: 100%"
-                            >
-                            </a-input>
-                        </a-form-item>
-                    
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Country"
-                        >
-                            <a-input
-                                v-model="child.address.country"
-                            >
-                            </a-input>
-                        </a-form-item>
+                        
                          <a-form-item
                         v-bind="formItemLayout"
                         label="Leaving Date"
@@ -463,10 +463,11 @@ export default {
           let childDetails = res.data.child;
           this.child = childDetails;
           if (this.isChild) {
+            this.form.setFieldsValue({ dadPhone: childDetails.contactNumber });
+            this.form.setFieldsValue({ momphone: 123 });
             this.form.setFieldsValue({ name: childDetails.name });
             this.form.setFieldsValue({ email: childDetails.email });
-            this.form.setFieldsValue({ dadPhone: childDetails.contactNumber });
-            this.form.setFieldsValue({ momPhone: childDetails.parentsNumber });
+          
             this.form.setFieldsValue({
               landline: childDetails.landline
             });

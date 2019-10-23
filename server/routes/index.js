@@ -6,5 +6,6 @@ module.exports = function (app) {
   const paRoutes = require('./passengerAssistant')
   const fileUploadRoutes = require('./fileUpload');
   const invoiceRoutes = require('./invoice');
-  app.use(userRoutes, driverRoutes, childRoutes, paRoutes, fileUploadRoutes, attendanceRoutes, invoiceRoutes);
+  const noteRoutes = require('./note');
+  app.use(userRoutes, driverRoutes, childRoutes, paRoutes, fileUploadRoutes, attendanceRoutes, invoiceRoutes, noteRoutes);
 };

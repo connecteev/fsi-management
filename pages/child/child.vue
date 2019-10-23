@@ -5,20 +5,62 @@
         <v-flex lg12 sm12 xs12>
           <v-btn class="ml-4" depressed right color="primary" @click="addChild"><v-icon dark>add</v-icon> Add Child</v-btn>
           <a-table :columns="columns" :dataSource="data" @change="onChange" rowKey="_id" :loading="loading">
-            <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
-            
+            <a slot="name" slot-scope="text" href="javascript:;">{{ text }}</a>
             <template slot="operation" slot-scope="text, record, index">
               <div class='editable-row-operations'>
-                <a-button @click="() => edit(record._id)" >Edit</a-button>
-                 <a-divider type="vertical" />
+                <a-button type="primary" @click="showModal()">Add Note</a-button>
+                <a-button  @click="viewNotes(record._id), showModalViewNotes = !showModalViewNotes">View Notes</a-button>
+                <a-modal v-model="showModalViewNotes" width="1200px">
+                   <template slot="footer">
+                    <a-button key="back" @click="handleCancel">Return</a-button>                    
+                  </template>
+                  <div style="background-color: #ececec; padding: 20px;">
+                    <a-row :gutter="16">
+                      <a-col :span="8">
+                        <a-card title="Card title" :bordered="false">
+                          <p>card content</p>
+                          <template class="ant-card-actions" slot="actions">
+                            
+                            <a-icon type="edit" />
+                            <a-icon type="ellipsis" />
+                          </template>
+                        </a-card>
+                      </a-col>
+                      <a-col :span="8">
+                        <a-card title="Card title" :bordered="false">
+                          <p>card content</p>
+                          <template class="ant-card-actions" slot="actions">
+                            
+                            <a-icon type="edit" />
+                            <a-icon type="ellipsis" />
+                          </template>
+                        </a-card>
+                      </a-col>
+                      <a-col :span="8">
+                        <a-card title="Card title" :bordered="false">
+                          <p>card content</p>
+                          <template class="ant-card-actions" slot="actions">
+                            
+                            <a-icon type="edit" />
+                            <a-icon type="ellipsis" />
+                          </template>
+                        </a-card>
+                      </a-col>
+                    </a-row>
+                  </div>
+                </a-modal>
+                <a-button @click="() => edit(record._id)">Edit</a-button>
                 <a-popconfirm
-                v-if="data.length"
-                title="Sure to delete?"
-                @confirm="() => onDelete(record._id)" >
-                <a href="javascript:;">Delete</a>
-              </a-popconfirm> 
+                  v-if="data.length"
+                  title="Sure to delete?"
+                  @confirm="() => onDelete(record._id)" >
+                    <a-button href="javascript:;" type="danger">Delete</a-button>
+                </a-popconfirm> 
               </div>
-              
+              <a-modal title="Add note" v-model="visible" @ok="handleOk(record._id)" okText="Add note">
+                <a-input class="my-4" v-model="addNote.noteName" placeholder="Note Name" />
+                <a-textarea v-model="addNote.noteDetails" placeholder="Note Details" :rows="4" />
+              </a-modal>
             </template> 
           </a-table>
         </v-flex>       
@@ -28,7 +70,6 @@
 </template>
 <script>
 import axios from "axios";
-
 const columns = [
   {
     title: "Name",
@@ -43,7 +84,7 @@ const columns = [
   {
     title: "Email",
     dataIndex: "child.email",
-    width: "15%",
+    width: "10%",
     scopedSlots: { customRender: "email" },
     onFilter: (value, record) => record.name.indexOf(value) === 0,
     sorter: (a, b) => a.child.email.length - b.child.email.length
@@ -59,7 +100,7 @@ const columns = [
   {
     title: "Route",
     dataIndex: "child.routeNumber",
-    width: "10%",
+    width: "5%",
     scopedSlots: { customRender: "routeNumber" },
     sorter: (a, b) => a.child.routeNumber.length - b.child.routeNumber.length
   },
@@ -103,32 +144,24 @@ const columns = [
   {
     title: "Action",
     dataIndex: "operation",
-    width: "20%",
+    width: "30%",
     scopedSlots: { customRender: "operation" }
   }
 ];
-
 const data = [];
-// for (let i = 1; i < 100; i++) {
-//   data.push({
-//     key: i.toString(),
-//     name: `Edrward ${i}`,
-//     age: 32,
-//     address: `London Park no. ${i}`
-//   });
-// }
-
 function onChange(pagination, filters, sorter) {
   console.log("params", pagination, filters, sorter);
 }
-
 export default {
   data() {
     this.cacheData = data.map(item => ({ ...item }));
     return {
       data,
       columns,
-      loading: false
+      loading: false,
+      visible: false,
+      showModalViewNotes: false,
+      addNote: {}
     };
   },
   methods: {
@@ -141,6 +174,25 @@ export default {
         target[column] = value;
         this.data = newData;
       }
+    },
+    showModal() {
+      this.visible = true;
+    },
+    viewNotes() {
+
+    },
+    handleCancel(e) {
+        this.showModalViewNotes = false;
+    },
+    handleOk(userId) {
+      this.addNote.userId = userId;
+      axios.post("/api/add-note", this.addNote)
+        .then(res => {
+          if(res.data.success){
+            this.$message.success(res.data.message);
+          }
+        })
+      this.visible = false;
     },
     edit(id) {
       this.$router.push(`/child/update-child/${id}`);

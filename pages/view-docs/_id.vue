@@ -20,7 +20,7 @@
               <template slot="title">
                 <span>View</span>
               </template>
-              <a :href="docImage(index)" target="_blank"><a-icon type="eye" /></a>
+              <a :href="require('../../uploads/' + docImage(index))" target="_blank"><a-icon type="eye" /></a>
             </a-tooltip>
             <a-tooltip placement="top" >
               <template slot="title">
