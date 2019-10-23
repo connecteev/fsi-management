@@ -49,7 +49,7 @@ const columns = [
     sorter: (a, b) => a.child.email.length - b.child.email.length
   },
   {
-    title: "Phone",
+    title: "Dad Phone",
     dataIndex: "child.contactNumber",
     width: "10%",
     scopedSlots: { customRender: "phone" },

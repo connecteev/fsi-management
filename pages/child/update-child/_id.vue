@@ -10,7 +10,7 @@
                 @submit="handleSubmit"
                 :loading="loading"
             >
-                <a-row :gutter="24">
+                <a-row :gutter="48">
                     <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
@@ -27,8 +27,6 @@
                             ]"
                         />
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
                         label="E-mail"
@@ -47,8 +45,6 @@
                             ]"
                         />
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
                         label="Date of Birth"
@@ -62,39 +58,40 @@
                             </div>
                            
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
-                        label="Route Number"
-                        >
-                            <a-input
-                                v-model="child.routeNumber"
-                            >
-                            </a-input>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Phone Number"
+                        label="Dad Number"
                         >
                             <a-input
                                 v-decorator="[
-                                'phone',
+                                'dadPhone',
                                 {
-                                    rules: [{ required: true, message: 'Please input your phone number!' }],
+                                    rules: [{ required: true, message: 'Please input dad number!' }],
                                 }
                                 ]"
                                 style="width: 100%"
                             >
                             </a-input>
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
+                        
                         <a-form-item
                         v-bind="formItemLayout"
-                        label="Landline"
+                        label="Mom Number"
+                        >
+                            <a-input
+                                v-decorator="[
+                                'momPhone',
+                                {
+                                    rules: [{ required: true, message: 'Please input mom number!' }],
+                                }
+                                ]"
+                                style="width: 100%"
+                            >
+                            </a-input>
+                        </a-form-item>
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Home Landline"
                         >
                             <a-input
                 
@@ -102,16 +99,14 @@
                                 'landline',
                                 {
                                     rules: [{
-                                        required: true, message: 'Please enter your landline number!',
+                                        required: true, message: 'Please enter home landline number!',
                                     }]
                                 }
                                 ]"
                             >
                             </a-input>
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
+                         <a-form-item
                         v-bind="formItemLayout"
                         label="Postal Code"
                         >
@@ -121,8 +116,7 @@
                             >
                             </a-input>
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
+                    
                         <a-form-item
                         v-bind="formItemLayout"
                         label="Address"
@@ -140,8 +134,7 @@
                             >
                             </a-input>
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
+                   
                         <a-form-item
                         v-bind="formItemLayout"
                         label="Town"
@@ -152,8 +145,7 @@
                             >
                             </a-input>
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
+                    
                         <a-form-item
                         v-bind="formItemLayout"
                         label="Country"
@@ -163,109 +155,7 @@
                             >
                             </a-input>
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="School Name"
-                        >
-                            <a-input
-                                
-                                v-decorator="[
-                                'schoolName',
-                                {
-                                    rules: [{
-                                        required: true, message: 'Please enter school name!',
-                                    }]
-                                }
-                                ]"
-                            >
-                            </a-input>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="School Address"
-                        >
-                            <a-input
-                                
-                                v-decorator="[
-                                'schoolAddress',
-                                {
-                                    rules: [{
-                                        required: true, message: 'Please enter school address!',
-                                    }]
-                                }
-                                ]"
-                            >
-                            </a-input>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Home Pick Time"
-                        v-if="isChild"
-                        >
-                          <div v-if="child.homePickUpTime">
-                                <a-time-picker :defaultValue="moment(child.homePickUpTime, 'h:mm a')" use12Hours format="h:mm a" @change="setHomePickTime" />
-                            </div>
-                            <div v-else>
-                        
-                                <a-time-picker use12Hours format="h:mm a" @change="setHomePickTime" />
-                            </div>
-
-                            
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="School Pick Time"
-                        v-if="isChild"
-                        >
-                          <div v-if="child.schoolPickUpTime">
-                                  <a-time-picker :defaultValue="moment(child.schoolPickUpTime, 'h:mm a')" use12Hours format="h:mm a" @change="setSchoolPickTime" />
-                              </div>
-                              <div v-else>
-                                  <a-time-picker use12Hours format="h:mm a" @change="setSchoolPickTime" />
-                              </div>
-                            
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Medical History"
-                        >
-                          <a-textarea v-model="child.medicalHistory" placeholder="Enter your text here" :autosize="{ minRows: 2, maxRows: 10 }" />
-
-                            
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="Joining Date"
-                        v-if="isChild"
-                        >
-                            
-                            <div v-if="child.joinDate">
-                                <a-date-picker :defaultValue="moment(child.joinDate, 'YYYY-MM-DD')" format="YYYY-MM-DD" @change="setJoiningDate" />
-                            </div>
-                            <div v-else>
-                                <a-date-picker @change="setJoiningDate" />
-                            </div>
-                            
-                        </a-form-item>
-                    </a-col>
-                    
-                    
-                </a-row>
-                <a-row :gutters="24">
-                      <a-col :span="12">
-                        <a-form-item
+                         <a-form-item
                         v-bind="formItemLayout"
                         label="Leaving Date"
                         v-if="isChild"
@@ -279,8 +169,7 @@
                             </div>
                             
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
+                    
                         <a-form-item
                         v-bind="formItemLayout"
                         label="Assign Driver"
@@ -325,8 +214,102 @@
 
 
                         </a-form-item>
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="PA Required"
+                        >
+                            <a-radio-group @change="setPaRequired" v-model="child.paRequired">
+                              <a-radio value="Yes">Yes</a-radio>
+                              <a-radio value="No">No</a-radio>
+                            </a-radio-group>
+                            
+                        </a-form-item>  
                     </a-col>
+
                     <a-col :span="12">
+                    <a-form-item
+                        v-bind="formItemLayout"
+                        label="School Name"
+                        >
+                            <a-input
+                                
+                                v-decorator="[
+                                'schoolName',
+                                {
+                                    rules: [{
+                                        required: true, message: 'Please enter school name!',
+                                    }]
+                                }
+                                ]"
+                            >
+                            </a-input>
+                        </a-form-item>
+                   
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="School Address"
+                        >
+                            <a-input
+                                
+                                v-decorator="[
+                                'schoolAddress',
+                                {
+                                    rules: [{
+                                        required: true, message: 'Please enter school address!',
+                                    }]
+                                }
+                                ]"
+                            >
+                            </a-input>
+                        </a-form-item>
+                        
+                         <a-form-item
+                        v-bind="formItemLayout"
+                        label="Route Number"
+                        >
+                            <a-input
+                                v-model="child.routeNumber"
+                            >
+                            </a-input>
+                        </a-form-item>
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Home Pick Time"
+                        v-if="isChild"
+                        >
+                          <div v-if="child.homePickUpTime">
+                                <a-time-picker :defaultValue="moment(child.homePickUpTime, 'h:mm a')" use12Hours format="h:mm a" @change="setHomePickTime" />
+                            </div>
+                            <div v-else>
+                        
+                                <a-time-picker use12Hours format="h:mm a" @change="setHomePickTime" />
+                            </div>
+
+                            
+                        </a-form-item>
+                    
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="School Pick Time"
+                        v-if="isChild"
+                        >
+                          <div v-if="child.schoolPickUpTime">
+                                  <a-time-picker :defaultValue="moment(child.schoolPickUpTime, 'h:mm a')" use12Hours format="h:mm a" @change="setSchoolPickTime" />
+                              </div>
+                              <div v-else>
+                                  <a-time-picker use12Hours format="h:mm a" @change="setSchoolPickTime" />
+                              </div>
+                            
+                        </a-form-item>
+                  
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Medical History"
+                        >
+                          <a-textarea v-model="child.medicalHistory" placeholder="Enter your text here" :autosize="{ minRows: 2, maxRows: 10 }" />
+
+                            
+                        </a-form-item>
                         <a-form-item
                         v-bind="formItemLayout"
                         label="Car Seat"
@@ -337,20 +320,18 @@
                             >
                             </a-input>
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
+                  
                         <a-form-item
                         v-bind="formItemLayout"
                         label="Seating Position"
                         >
                             <a-input
-                                v-model="child.seatingPostion"
+                                v-model="child.seatingPosition"
                                 style="width: 100%"
                             >
                             </a-input>
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
+                  
                         <a-form-item
                         v-bind="formItemLayout"
                         label="Music"
@@ -361,20 +342,6 @@
                             >
                             </a-input>
                         </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item
-                        v-bind="formItemLayout"
-                        label="PA Required"
-                        >
-                            <a-radio-group @change="setPaRequired" v-model="child.paRequired">
-                              <a-radio value="Yes">Yes</a-radio>
-                              <a-radio value="No">No</a-radio>
-                            </a-radio-group>
-                            
-                        </a-form-item>     
-                    </a-col>
-                    <a-col :span="12" >
                         <a-form-item
                         v-bind="formItemLayout"
                         label="Active"
@@ -382,7 +349,9 @@
                         >
                           <a-switch :defaultChecked="defaultChecked" @change='setStatus'/> 
                         </a-form-item>     
+                       
                     </a-col>
+ 
                     <a-col :span="24">
                         <a-form-item v-bind="formItemLayout" class="ml-5">
                             <a-button
@@ -394,10 +363,7 @@
                             </a-button>
                         </a-form-item>
                     </a-col>
-                    </a-row>
-                
-                
-                
+                </a-row>
             </a-form>
         </v-flex>       
       </v-layout>
@@ -430,6 +396,7 @@ export default {
         email: "",
         dateOfBirth: "",
         contactNumber: "",
+        parentsNumber: "",
         address: {
           streetAddress: "",
           town: "",
@@ -498,7 +465,8 @@ export default {
           if (this.isChild) {
             this.form.setFieldsValue({ name: childDetails.name });
             this.form.setFieldsValue({ email: childDetails.email });
-            this.form.setFieldsValue({ phone: childDetails.contactNumber });
+            this.form.setFieldsValue({ dadPhone: childDetails.contactNumber });
+            this.form.setFieldsValue({ momPhone: childDetails.parentsNumber });
             this.form.setFieldsValue({
               landline: childDetails.landline
             });
@@ -528,7 +496,8 @@ export default {
           this.loading = true;
           this.child.name = values.name;
           this.child.email = values.email;
-          this.child.contactNumber = values.phone;
+          this.child.contactNumber = values.dadPhone;
+          this.child.parentsNumber = values.momPhone;
           this.child.address.streetAddress = values.address;
           this.child.landline = values.landline;
           this.child.schoolName = values.schoolName;

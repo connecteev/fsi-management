@@ -20,6 +20,7 @@ var childSchema = mongoose.Schema({
       town: String,
       postalCode: String,
     },
+    parentsNumber: String,
     contactNumber: String,
     landline: String,
     medicalHistory: String,
