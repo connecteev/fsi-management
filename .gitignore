@@ -84,8 +84,4 @@ dist
 sw.*
 
 
-# Uploaded files
-uploads/
-
 # server/config 
-server/config/secret.js

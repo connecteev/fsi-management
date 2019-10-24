@@ -1,27 +1,11 @@
 // load up the file upload model
 let FileUpload = require("../model/fileUpload");
-const fs = require('fs')
+const cloudinary = require("cloudinary").v2;
 
 
 // Handle - add document  from the client app on POST request
 exports.add_document = function (req, res) {
-  // Upload a new document 
-  // FileUpload.findOne({
-  //     "document.documentName": req.body.documentName
-  //   },
-  //   function (err, document) {
-  //     if (err) {
-  //       return res.send(err);
-  //     }
-  //     if (document) {
-  //       return res.send({
-  //         message: "This document name is already exist."
-  //       });
-  //     } else {
 
-  //     }
-  //   }
-  // );
   let fileData = new FileUpload();
   fileData.document.documentName = req.body.documentName;
   fileData.document.userId = req.body.userId;
@@ -29,7 +13,8 @@ exports.add_document = function (req, res) {
   fileData.document.expiryDate = req.body.expiryDate;
   fileData.document.redAlertDate = req.body.redAlertDate;
   fileData.document.greenAlertDate = req.body.greenAlertDate;
-  fileData.document.documentPath = req.file.path;
+  fileData.document.documentPath = req.file.url;
+  fileData.document.documentPublicId = req.file.public_id;
   fileData.document.status = req.body.status;
   fileData.document.createdAt = Date.now();
 
@@ -97,8 +82,9 @@ exports.update_document = function (req, res) {
     if (req.body.file != null) {
       console.log("File not found", req.body.file);
     } else {
-      console.log("File found", req.body.file);
-      doc.document.documentPath = req.file.path;
+      
+      doc.document.documentPath = req.file.url;
+      doc.document.documentPublicId = req.file.public_id;
     }
     doc.document.status = req.body.status;
     doc.save()
@@ -127,7 +113,8 @@ exports.delete_document = function (req, res) {
         message: 'Document not found.'
       })
     }
-    fs.unlinkSync(doc.document.documentPath);
+
+    cloudinary.uploader.destroy(doc.document.documentPublicId);
     res.send({
       success: true,
       message: 'Document deleted successfully'

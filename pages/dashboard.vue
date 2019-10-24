@@ -244,7 +244,7 @@ export default {
           userId: id,
           alternativeShifts: this.alternativeShifts
         })
-        .then(res => {
+        .then( res => {
           if (res.data.success) {
             this.$message.success(res.data.message);
             this.alternativeShifts.alternativeWork.date = "";
@@ -254,11 +254,11 @@ export default {
             this.checkedShiftE = false;
             this.showModal = false;
             this.showPaModal = false;
-            if (isDriver) {
-              this.data.splice(this.userIndex, 1);
+            if (this.isDriver) {
+               this.data.splice(this.userIndex, 1);
               this.isDriver = false;
             }
-            if (isPa) {
+            if (this.isPa) {
               this.paData.splice(this.userIndex, 1);
               this.isPa = false;
             }

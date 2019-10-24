@@ -81,27 +81,27 @@ exports.create_alternative_shifts = function (req, res) {
             });
           });
       }
-      // else {
-      //   let attendanceData = new Attendance();
-      //   attendanceData.attendance.userId = req.body.userId;
-      //   attendanceData.attendance.dates.push(req.body.attendanceDate);
-      //   attendanceData.attendance.createdAt = Date.now();
-      //   attendanceData
-      //     .save()
-      //     .then(item => {
-      //       res.send({
-      //         success: true,
-      //         message: "Attendance added successfully.",
-      //         item
-      //       });
-      //     })
-      //     .catch(err => {
-      //       res.status(400).send({
-      //         message: "unable to save user to database",
-      //         err
-      //       });
-      //     });
-      // }
+      else {
+        let attendanceData = new Attendance();
+        attendanceData.attendance.userId = req.body.userId;
+        attendanceData.attendance.alternativeShifts.push(req.body.alternativeShifts);
+        attendanceData.attendance.createdAt = Date.now();
+        attendanceData
+          .save()
+          .then(item => {
+            res.send({
+              success: true,
+              message: "Alternate driver added successfully.",
+              item
+            });
+          })
+          .catch(err => {
+            res.status(400).send({
+              message: "unable to save user to database",
+              err
+            });
+          });
+      }
     }
   );
 };

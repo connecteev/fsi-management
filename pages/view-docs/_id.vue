@@ -11,7 +11,7 @@
         <img src="" alt="">
         <img
             :alt="items.document.documentName"
-            :src="require('../../uploads/' + docImage(index))"
+            :src="items.document.documentPath"
             slot="cover"
             height="180"
         />
@@ -20,7 +20,7 @@
               <template slot="title">
                 <span>View</span>
               </template>
-              <a :href="require('../../uploads/' + docImage(index))" target="_blank"><a-icon type="eye" /></a>
+              <a :href="items.document.documentPath" target="_blank"><a-icon type="eye" /></a>
             </a-tooltip>
             <a-tooltip placement="top" >
               <template slot="title">
@@ -63,12 +63,7 @@ export default {
   },
 
   methods: {
-    docImage(index) {
-      let imgPath = this.userDocs[index].document.documentPath;
-      imgPath = imgPath.substring(imgPath.indexOf("/") + 1);
-      return imgPath;
-      require(`../../uploads/${imgPath}`);
-    },
+    
     deleteDoc(id) {
       axios.post("/api/delete-document", { id }).then(res => {
         if (res.data.success) {

@@ -12,6 +12,7 @@ var fileUploadSchema = mongoose.Schema({
     redAlertDate: String,
     greenAlertDate: String,
     documentPath: String,
+    documentPublicId: String,
     status: String,
     createdAt: Date
   }

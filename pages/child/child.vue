@@ -14,39 +14,46 @@
                    <template slot="footer">
                     <a-button key="back" @click="handleCancel">Return</a-button>                    
                   </template>
-                  <div style="background-color: #ececec; padding: 20px;">
-                    <a-row :gutter="16">
-                      <a-col :span="8">
-                        <a-card title="Card title" :bordered="false">
-                          <p>card content</p>
-                          <template class="ant-card-actions" slot="actions">
+                  <div style="background-color: #ececec; padding: 20px;" class="mt-4">
+                    <a-row :gutter="24">
+                      <a-col :span="8" v-for="(item, index) in userNotes" :key="index" >
+                        <a-card :title="item.note.noteName" :bordered="false">
+                          <p >{{item.note.noteDetails}}</p>
+                          <div v-if="!readMoreActivated">
+                            <div v-if="item.note.noteDetails.length > 30">
+                              {{ item.note.noteDetails.slice(0, 30) }}
+                              <br>
+                              <a v-if="item.note.noteDetails.length > 30" @click="readMoreActivated = true">Read more</a>
+                            </div>
                             
-                            <a-icon type="edit" />
-                            <a-icon type="ellipsis" />
+                          </div>
+                          <div v-else>
+                              {{ item.note.noteDetails }}
+                              <br>
+                              <a @click="readMoreActivated = false">Read less</a>
+                            </div>
+                          
+                          <template class="ant-card-actions" slot="actions">
+                            <a-tooltip placement="top" >
+                              <template slot="title">
+                                <span>Edit</span>
+                              </template>
+                              <a-icon type="edit" @click="editNote(item._id), contentEditable = true" />
+                            </a-tooltip>
+                            <a-tooltip placement="top" >
+                              <template slot="title">
+                                <span>Delete</span>
+                              </template>
+                              <a-popconfirm title="Are you sure delete this file?" @confirm="deleteNote(item._id)" @cancel="cancel" okText="Yes" cancelText="No">
+                                <a-icon type="delete" />
+                              </a-popconfirm>
+                            </a-tooltip>
                           </template>
                         </a-card>
                       </a-col>
-                      <a-col :span="8">
-                        <a-card title="Card title" :bordered="false">
-                          <p>card content</p>
-                          <template class="ant-card-actions" slot="actions">
-                            
-                            <a-icon type="edit" />
-                            <a-icon type="ellipsis" />
-                          </template>
-                        </a-card>
-                      </a-col>
-                      <a-col :span="8">
-                        <a-card title="Card title" :bordered="false">
-                          <p>card content</p>
-                          <template class="ant-card-actions" slot="actions">
-                            
-                            <a-icon type="edit" />
-                            <a-icon type="ellipsis" />
-                          </template>
-                        </a-card>
-                      </a-col>
+                        
                     </a-row>
+                    <a-pagination class="my-4" :v-model="1" :total="userNotes.length" />
                   </div>
                 </a-modal>
                 <a-button @click="() => edit(record._id)">Edit</a-button>
@@ -57,7 +64,12 @@
                     <a-button href="javascript:;" type="danger">Delete</a-button>
                 </a-popconfirm> 
               </div>
-              <a-modal title="Add note" v-model="visible" @ok="handleOk(record._id)" okText="Add note">
+              
+              <a-modal v-if="!isUpdateNote" title="Add note" v-model="visible" @ok="handleOk(record._id)" okText="Add note">
+                <a-input class="my-4" v-model="addNote.noteName" placeholder="Note Name" />
+                <a-textarea v-model="addNote.noteDetails" placeholder="Note Details" :rows="4" />
+              </a-modal>
+              <a-modal v-else title="Update note" v-model="visible" @ok="updateNote()" okText="Update note">
                 <a-input class="my-4" v-model="addNote.noteName" placeholder="Note Name" />
                 <a-textarea v-model="addNote.noteDetails" placeholder="Note Details" :rows="4" />
               </a-modal>
@@ -160,8 +172,13 @@ export default {
       columns,
       loading: false,
       visible: false,
+      readMoreActivated: false,
       showModalViewNotes: false,
-      addNote: {}
+      contentEditable: false,
+      addNote: {},
+      userNotes: [],
+      isUpdateNote: false,
+      noteId: '',
     };
   },
   methods: {
@@ -178,11 +195,50 @@ export default {
     showModal() {
       this.visible = true;
     },
-    viewNotes() {
-
+    viewNotes(userId) {
+      axios.post("/api/get-user-note", {userId}).then( res => {
+        this.userNotes = res.data.notes;
+      })
+    },
+    deleteNote(id) {
+      axios.post("/api/delete-note", { id }).then(res => {
+        if (res.data.success) {
+          this.viewNotes();
+          this.$message.success(res.data.message);
+        }
+      });
     },
     handleCancel(e) {
         this.showModalViewNotes = false;
+    },
+    updateNote(){
+      axios.post("/api/update-note", { id: this.noteId, noteName: this.addNote.noteName , noteDetails: this.addNote.noteDetails})
+        .then(res => {
+          if(res.data.success){
+            this.$message.success(res.data.message);
+          }else{
+            this.$message.warning(res.data.message);
+          }
+        })
+      this.visible = false;
+    },
+    editNote(id) {
+      this.noteId= id;
+      this.loading = true;
+      this.showModalViewNotes = false;
+      this.isUpdateNote = true;
+      axios
+        .post("/api/get-single-note", { id })
+        .then(res => {
+          if (res.data.success) {
+            this.visible = true,
+            this.loading = false,
+            this.addNote = res.data.doc.note
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     handleOk(userId) {
       this.addNote.userId = userId;
@@ -193,6 +249,10 @@ export default {
           }
         })
       this.visible = false;
+    },
+    cancel(e) {
+      console.log(e);
+      this.$message.error("Click on No");
     },
     edit(id) {
       this.$router.push(`/child/update-child/${id}`);

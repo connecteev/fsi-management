@@ -25,6 +25,7 @@ exports.add_note = function (req, res) {
 };
 // get single user all notes
 exports.get_user_note = function (req, res) {
+  
   Note.find({
       'note.userId': req.body.userId
     })
@@ -65,7 +66,6 @@ exports.update_note = function (req, res) {
       })
     doc.note.noteName = req.body.noteName;
     doc.note.noteDetails = req.body.noteDetails;
-    doc.note.userId = req.body.userId;
     doc.save()
       .then(item => {
         res.json({
