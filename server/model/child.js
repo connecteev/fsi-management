@@ -35,6 +35,7 @@ var childSchema = mongoose.Schema({
     joinDate: String,
     leaveDate: String,
     status: String,
+    travelDays: [],
     assignedDriver: {
       driverName: String,
       driverId: String

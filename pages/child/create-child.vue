@@ -232,6 +232,13 @@
                             <a-time-picker use12Hours format="h:mm a" @change="setSchoolPickTime" />
                             
                         </a-form-item>
+                        <a-form-item v-bind="formItemLayout" label="Traveling Days">
+                          <a-select mode="multiple" style="width: 100%" :tokenSeparators="[',']" @change="setTravelDays">
+                            <a-select-option v-for="(item, index) in weekDays" :key="index" 
+                              >{{item}}</a-select-option
+                            >
+                          </a-select>
+                        </a-form-item>
                          <a-form-item
                         v-bind="formItemLayout"
                         label="Medical History"
@@ -344,6 +351,7 @@ export default {
         joinDate: "",
         seatingPosition: "",
         music: "",
+        travelDays: [],
         status: "Active",
         paRequired: "No",
         assignedDriver: {
@@ -351,7 +359,16 @@ export default {
           driverName: ""
         }
       },
-      drivers: []
+      drivers: [],
+      weekDays: [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ]
     };
   },
   beforeCreate() {
@@ -369,6 +386,15 @@ export default {
     },
     setSchoolPickTime(time, timeString) {
       this.child.schoolPickUpTime = timeString;
+    },
+    setTravelDays(value) {
+      this.child.travelDays = [];
+      value.sort();
+      value.map(item => {
+        if (!this.child.travelDays.includes(this.weekDays[item])) {
+          this.child.travelDays.push(this.weekDays[item]);
+        }
+      });
     },
     setStatus(status) {
       if (status) {

@@ -301,6 +301,14 @@
                               </div>
                             
                         </a-form-item>
+
+                        <a-form-item v-bind="formItemLayout" label="Traveling Days">
+                          <a-select mode="multiple" style="width: 100%" :defaultValue="child.travelDays" :tokenSeparators="[',']" @change="setTravelDays">
+                            <a-select-option v-for="(item, index) in weekDays" :key="index" 
+                              >{{item}}</a-select-option
+                            >
+                          </a-select>
+                        </a-form-item>
                   
                         <a-form-item
                         v-bind="formItemLayout"
@@ -410,6 +418,7 @@ export default {
         carSeat: "",
         seatingPosition: "",
         music: "",
+        travelDays: [],
         landline: "",
         medicalHistory: "",
         joinDate: "",
@@ -421,6 +430,15 @@ export default {
         },
         status: "Active"
       },
+      weekDays: [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
       drivers: [],
       userId: this.$route.params.id
     };
@@ -451,6 +469,15 @@ export default {
       }
       this.child.status = "Inactive";
     },
+    setTravelDays(value) {
+      this.child.travelDays = [];
+      value.sort();
+      value.map(item => {
+        if (!this.child.travelDays.includes(this.weekDays[item])) {
+          this.child.travelDays.push(this.weekDays[item]);
+        }
+      });
+    },
     setPaRequired(e) {
       this.child.paRequired = e.target.value;
     },
@@ -467,7 +494,7 @@ export default {
             this.form.setFieldsValue({ momphone: 123 });
             this.form.setFieldsValue({ name: childDetails.name });
             this.form.setFieldsValue({ email: childDetails.email });
-          
+
             this.form.setFieldsValue({
               landline: childDetails.landline
             });
