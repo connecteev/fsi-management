@@ -4,7 +4,7 @@
       <v-layout row wrap>
         <v-flex lg12 sm12 xs12 >
             <h3 class="text-xs-center">Edit Document Details</h3>
-            <a-form class="v-card v-sheet theme--light pt-5 pr-5" layout='vertical' :form="form">
+            <a-form v-if="document" class="v-card v-sheet theme--light pt-5 pr-5" layout='vertical' :form="form">
                 <a-row :gutter="24" class="ml-5 mr-5">
                     <a-form-item label='Document Name' >
                     <a-input
@@ -25,10 +25,10 @@
                     <a-col class="gutter-row" :span="8">
                         <a-form-item label='Expiry Date' v-if="isUser">
                             <div v-if="document.expiryDate">
-                                <a-date-picker :defaultValue="moment(document.expiryDate, 'YYYY-MM-DD')" format="YYYY-MM-DD" @change="setExpiryDate" />
+                                <a-date-picker :defaultValue="moment(document.expiryDate, 'DD-MM-YYYY')" format="DD-MM-YYYY" @change="setExpiryDate" />
                             </div>
                             <div v-else>
-                                <a-date-picker @change="setExpiryDate" />
+                                <a-date-picker @change="setExpiryDate" format="DD-MM-YYYY" />
                             </div>
                             
                         </a-form-item>
@@ -37,7 +37,7 @@
                     <a-col class="gutter-row" :span="8">
                       <a-form-item label='Red Alert Date'   v-if="isUser">
                             <div v-if="document.expiryDate">
-                                <a-date-picker :defaultValue="moment(document.redAlertDate, 'YYYY-MM-DD')" format="YYYY-MM-DD" @change="setRedAlertDate" />
+                                <a-date-picker :defaultValue="moment(document.redAlertDate, 'DD-MM-YYYY')" format="DD-MM-YYYY" @change="setRedAlertDate" />
                             </div>
                             <div v-else>
                                 <a-date-picker @change="setRedAlertDate" />
@@ -47,7 +47,7 @@
                     <a-col class="gutter-row" :span="8">
                       <a-form-item label='Green Alert Date' v-if="isUser">
                           <div v-if="document.expiryDate">
-                                <a-date-picker :defaultValue="moment(document.greenAlertDate, 'YYYY-MM-DD')" format="YYYY-MM-DD" @change="setGreenAlertDate" />
+                                <a-date-picker :defaultValue="moment(document.greenAlertDate, 'DD-MM-YYYY')" format="DD-MM-YYYY" @change="setGreenAlertDate" />
                             </div>
                             <div v-else>
                                 <a-date-picker @change="setGreenAlertDate" />
@@ -57,19 +57,31 @@
                   
                   </a-row>
                   <a-form-item label='Add Document' >
-                    <a-upload-dragger name="file" 
-                    :remove="handleRemove"
-                    :beforeUpload="beforeUpload"
-                    :multiple="false"
-                    listType="picture"
-                    accept="image/jpeg,image/png,.pdf"
-                    >
-                      <p class="ant-upload-drag-icon">
-                        <a-icon type="inbox" />
-                      </p>
-                      <p class="ant-upload-text">Click or drag file to this area to upload</p>
-                      
-                    </a-upload-dragger>
+                    <a-upload-dragger 
+                      name="avatar"
+                      listType="picture-card"
+                      class="avatar-uploader"
+                      :showUploadList="false"
+                      :beforeUpload="beforeUpload"
+                      @change="handleChange"
+                      accept="image/jpeg,image/png,.pdf"
+                      v-decorator="[
+                          'file',
+                          {
+                            rules: [{
+                              required: true, message: 'Please add your file!',
+                            }]
+                          }
+                        ]"
+                      >
+                        <img v-if="imageUrl" :src="imageUrl" alt="Document | File Image" width="640px" />
+                        <img v-else-if="document.documentPath" :src="document.documentPath" alt="Document | File Image" width="640px">
+                        <div v-else>
+                          <a-icon :type="loading ? 'loading' : 'plus'" />
+                          <div class="ant-upload-text">Upload</div>
+                        </div>
+                        
+                      </a-upload-dragger>
                     
  
                   </a-form-item>
@@ -79,7 +91,7 @@
                             <a-switch defaultChecked @change='setStatus'/>
 
                   </a-form-item>     
-                  <a-button class="mb-4" type="primary" size="large" @click="updateDoc">Save</a-button>
+                  <a-button class="mb-4" type="primary" size="large" @click="updateDoc" :loading="loading">Save</a-button>
                 </a-row>     
             </a-form>
         </v-flex>       
@@ -92,6 +104,12 @@
 <script>
 import axios from "axios";
 import moment from "moment";
+
+function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+}
 export default {
   data() {
     return {
@@ -99,6 +117,7 @@ export default {
       loading: false,
       isUser: false,
       file: null,
+      imageUrl: '',
       document: {
         expiryDate: "",
         redAlertDate: "",
@@ -155,10 +174,11 @@ export default {
         });
     },
     updateDoc(e) {
+      this.loading = true;
       e.preventDefault();
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
-          this.confirmLoading = true;
+          
           const { file } = this;
           const formData = new FormData();
           formData.append("file", file);
@@ -175,7 +195,8 @@ export default {
             .post("/api/update-document", formData)
             .then(res => {
               if (res.data.success) {
-                this.confirmLoading = false;
+                this.loading = false;
+                
                 this.$message.success(res.data.message);
 
                 this.$router.push("/view-docs/" + this.document.userId);
@@ -184,12 +205,12 @@ export default {
               }
               if (!res.data.success) {
                 this.$message.warning(res.data.message);
-                this.confirmLoading = false;
+                this.loading = false;
               }
             })
             .catch(error => {
               this.$message.warning(error);
-              this.confirmLoading = false;
+              this.loading = false;
             });
         }
       });
@@ -197,10 +218,31 @@ export default {
     handleRemove(file) {
       this.file = null;
     },
+    handleChange(info) {
+      if (info.file.status === 'uploading') {
+        this.loading = true;
+        return;
+      }
+      if (info.file.status === 'done') {
+        // Get this url from response in real world.
+        getBase64(info.file.originFileObj, imageUrl => {
+          this.imageUrl = imageUrl;
+          this.loading = false;
+        });
+      }
+    },
     beforeUpload(file) {
+      const isJPG = file.type === 'image/jpeg' || 'image/png';
       this.file = file;
-      return false;
-    }
+      if (!isJPG) {
+        this.$message.error('You can only upload JPG or Png file!');
+      }
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        this.$message.error('Image must smaller than 2MB!');
+      }
+      return isJPG && isLt2M;
+    },
   },
   created() {
     this.getDocDetails();

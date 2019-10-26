@@ -72,7 +72,6 @@ exports.update_document = function (req, res) {
       return res.send({
         message: 'Document not found.'
       })
-    fs.unlinkSync(doc.document.documentPath);
     doc.document.documentName = req.body.documentName;
     doc.document.userId = req.body.userId;
     doc.document.userName = req.body.userName;
@@ -82,7 +81,7 @@ exports.update_document = function (req, res) {
     if (req.body.file != null) {
       console.log("File not found", req.body.file);
     } else {
-      
+      cloudinary.uploader.destroy(doc.document.documentPublicId);
       doc.document.documentPath = req.file.url;
       doc.document.documentPublicId = req.file.public_id;
     }

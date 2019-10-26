@@ -55,10 +55,10 @@
                         v-if="ispa"
                          >
                             <div v-if="pa.dateOfBirth">
-                                <a-date-picker :defaultValue="moment(pa.dateOfBirth, 'YYYY-MM-DD')" format="YYYY-MM-DD"  @change="setDateOfBirth" />
+                                <a-date-picker :defaultValue="moment(pa.dateOfBirth, 'DD-MM-YYYY')" format="DD-MM-YYYY"  @change="setDateOfBirth" />
                             </div>
                             <div v-else>
-                                <a-date-picker @change="setDateOfBirth" />
+                                <a-date-picker @change="setDateOfBirth" format="DD-MM-YYYY"/>
                             </div>
                            
                         </a-form-item>
@@ -162,10 +162,10 @@
                         >
                             
                             <div v-if="pa.joinDate">
-                                <a-date-picker :defaultValue="moment(pa.joinDate, 'YYYY-MM-DD')" format="YYYY-MM-DD" @change="setJoiningDate" />
+                                <a-date-picker :defaultValue="moment(pa.joinDate, 'DD-MM-YYYY')" format="DD-MM-YYYY" @change="setJoiningDate" />
                             </div>
                             <div v-else>
-                                <a-date-picker @change="setJoiningDate" />
+                                <a-date-picker @change="setJoiningDate" format="DD-MM-YYYY"/>
                             </div>
                             
                         </a-form-item>
@@ -178,10 +178,10 @@
                         >
                             
                             <div v-if="pa.leaveDate">
-                                <a-date-picker :defaultValue="moment(pa.leaveDate, 'YYYY-MM-DD')" format="YYYY-MM-DD" @change="setLeavingDate" />
+                                <a-date-picker :defaultValue="moment(pa.leaveDate, 'DD-MM-YYYY')" format="DD-MM-YYYY" @change="setLeavingDate" />
                             </div>
                             <div v-else>
-                                <a-date-picker @change="setLeavingDate" />
+                                <a-date-picker @change="setLeavingDate" format="DD-MM-YYYY"/>
                             </div>
                             
                         </a-form-item>

@@ -55,7 +55,7 @@
                         v-if="isDriver"
                          >
                             <div v-if="driver.dateOfBirth">
-                                <a-date-picker :defaultValue="moment(driver.dateOfBirth, 'YYYY-MM-DD')" format="YYYY-MM-DD"  @change="setDateOfBirth" />
+                                <a-date-picker :defaultValue="moment(driver.dateOfBirth, 'DD-MM-YYYY')" format="DD-MM-YYYY"  @change="setDateOfBirth" />
                             </div>
                             <div v-else>
                                 <a-date-picker @change="setDateOfBirth" />
@@ -162,7 +162,7 @@
                         >
                             
                             <div v-if="driver.joinDate">
-                                <a-date-picker :defaultValue="moment(driver.joinDate, 'YYYY-MM-DD')" format="YYYY-MM-DD" @change="setJoiningDate" />
+                                <a-date-picker :defaultValue="moment(driver.joinDate, 'DD-MM-YYYY')" format="DD-MM-YYYY" @change="setJoiningDate" />
                             </div>
                             <div v-else>
                                 <a-date-picker @change="setJoiningDate" />
@@ -178,7 +178,7 @@
                         >
                             
                             <div v-if="driver.leaveDate">
-                                <a-date-picker :defaultValue="moment(driver.leaveDate, 'YYYY-MM-DD')" format="YYYY-MM-DD" @change="setLeavingDate" />
+                                <a-date-picker :defaultValue="moment(driver.leaveDate, 'DD-MM-YYYY')" format="DD-MM-YYYY" @change="setLeavingDate" />
                             </div>
                             <div v-else>
                                 <a-date-picker @change="setLeavingDate" />

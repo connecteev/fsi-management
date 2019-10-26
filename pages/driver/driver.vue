@@ -24,6 +24,7 @@
               </div>
                 <a-modal
                   title="Add Docoment"
+                  width="800px"
                   :visible="showAddDocModal"
                   @ok="addDocument"
                   okText="Submit"	
@@ -46,27 +47,29 @@
                     />
                   </a-form-item>
                   <a-form-item label='Expiry Date' >
-                    <a-date-picker @change="setExpiryDate" />
+                    <a-date-picker @change="setExpiryDate" format="DD-MM-YYYY" v-bind:value=" document.expiryDate !== '' ? moment(document.expiryDate,'DD-MM-YYYY') : null"/>
                   </a-form-item>
                   <a-row :gutter="16">
                     <a-col class="gutter-row" :span="12">
                       <a-form-item label='Red Alert Date' >
-                        <a-date-picker @change="setRedAlertDate" />
+                        <a-date-picker @change="setRedAlertDate" format="DD-MM-YYYY" v-bind:value=" document.redAlertDate !== '' ? moment(document.redAlertDate,'DD-MM-YYYY') : null"/>
                       </a-form-item>
                     </a-col>
                     <a-col class="gutter-row" :span="12">
                       <a-form-item label='Green Alert Date' >
-                        <a-date-picker @change="setGreenAlertDate" />
+                        <a-date-picker @change="setGreenAlertDate" format="DD-MM-YYYY" v-bind:value=" document.greenAlertDate !== '' ? moment(document.greenAlertDate,'DD-MM-YYYY') : null"/>
                       </a-form-item>    
                     </a-col>
                   
                   </a-row>
                   <a-form-item label='Add Document' >
-                    <a-upload-dragger name="file" 
-                    :remove="handleRemove"
+                    <a-upload-dragger 
+                    name="avatar"
+                    listType="picture-card"
+                    class="avatar-uploader"
+                    :showUploadList="false"
                     :beforeUpload="beforeUpload"
-                    :multiple="false"
-                    listType="picture"
+                    @change="handleChange"
                     accept="image/jpeg,image/png,.pdf"
                     v-decorator="[
                         'file',
@@ -77,20 +80,18 @@
                         }
                       ]"
                     >
-                      <p class="ant-upload-drag-icon">
-                        <a-icon type="inbox" />
-                      </p>
-                      <p class="ant-upload-text">Click or drag file to this area to upload</p>
+                      <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
+                      <div v-else>
+                        <a-icon :type="loading ? 'loading' : 'plus'" />
+                        <div class="ant-upload-text">Upload</div>
+                      </div>
                       
                     </a-upload-dragger>
-                    
- 
                   </a-form-item>
                   <a-form-item
                         label="Active"
                         >
                             <a-switch defaultChecked @change='setStatus'/>
-
                   </a-form-item>     
                   
                 </a-form>
@@ -106,7 +107,7 @@
 </template>
 <script>
 import axios from "axios";
-
+import moment from "moment";
 const columns = [
   {
     title: "Name",
@@ -192,6 +193,12 @@ function onChange(pagination, filters, sorter) {
   console.log("params", pagination, filters, sorter);
 }
 
+function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+}
+
 export default {
   data() {
     this.cacheData = data.map(item => ({ ...item }));
@@ -201,8 +208,11 @@ export default {
       loading: false,
       showAddDocModal: false,
       confirmLoading: false,
+      showUploadFile: false,
       file: null,
+      imageUrl: '',
       uploading: false,
+      isDisabledUploadButton: false,
       document: {
         expiryDate: "",
         redAlertDate: "",
@@ -217,6 +227,7 @@ export default {
     this.form = this.$form.createForm(this);
   },
   methods: {
+    moment,
     onChange,
     setExpiryDate(date, dateString) {
       this.document.expiryDate = dateString;
@@ -235,10 +246,32 @@ export default {
     },
     handleRemove(file) {
       this.file = null;
+      this.isDisabledUploadButton = false;
+    },
+    handleChange(info) {
+      if (info.file.status === 'uploading') {
+        this.loading = true;
+        return;
+      }
+      if (info.file.status === 'done') {
+        // Get this url from response in real world.
+        getBase64(info.file.originFileObj, imageUrl => {
+          this.imageUrl = imageUrl;
+          this.loading = false;
+        });
+      }
     },
     beforeUpload(file) {
+      const isJPG = file.type === 'image/jpeg' || 'image/png';
       this.file = file;
-      return false;
+      if (!isJPG) {
+        this.$message.error('You can only upload JPG or Png file!');
+      }
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        this.$message.error('Image must smaller than 2MB!');
+      }
+      return isJPG && isLt2M;
     },
 
     edit(id) {
@@ -278,15 +311,31 @@ export default {
           formData.append("greenAlertDate", this.document.greenAlertDate);
           formData.append("status", this.document.status);
           this.uploading = true;
-          console.log("Received values of form: ", values);
+          
           axios
             .post("/api/add-document", formData)
             .then(res => {
               if (res.data.success) {
+                this.uploading = false;
+                this.document.documentName = '';
+                this.document.userId = '';
+                this.document.userName = '';
+                this.document.redAlertDate = '';
+                this.document.expiryDate = '';
+                this.document.greenAlertDate = '';
+                this.document.status = '';
+                this.imageUrl = '';
+                this.isDisabledUploadButton = false;
                 this.confirmLoading = false;
                 this.$message.success(res.data.message);
-                this.document = null;
-                this.file = null;
+                this.form.setFieldsValue({
+                  documentName: '',
+                });
+                this.form.setFieldsValue({
+                  file: null,
+
+                });
+                
                 this.showAddDocModal = false;
               }
               if (!res.data.success) {
@@ -302,7 +351,9 @@ export default {
       });
     },
     handleCancel(e) {
-      console.log("Clicked cancel button");
+      this.document.documentName = '';
+      this.file = null;
+      this.imageUrl = '';
       this.showAddDocModal = false;
     },
     getDrivers() {

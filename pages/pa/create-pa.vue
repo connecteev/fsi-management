@@ -52,7 +52,7 @@
                         v-bind="formItemLayout"
                         label="Date of Birth"
                         >
-                            <a-date-picker @change="setDateOfBirth" />
+                            <a-date-picker @change="setDateOfBirth" format="DD-MM-YYYY"/>
                         </a-form-item>
                     </a-col>
                     <a-col :span="12">
@@ -152,7 +152,7 @@
                         v-bind="formItemLayout"
                         label="Joining Date"
                         >
-                            <a-date-picker @change="setJoiningDate" />
+                            <a-date-picker @change="setJoiningDate" format="DD-MM-YYYY" />
                             
                         </a-form-item>
                     </a-col>

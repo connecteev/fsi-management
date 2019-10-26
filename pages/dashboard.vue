@@ -185,7 +185,6 @@ export default {
     PostSingleCard,
     PostListCard,
     ProfileCard,
-
     CircleStatistic,
     LinearStatistic
   },

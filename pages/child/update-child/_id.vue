@@ -146,10 +146,10 @@
                         v-if="isChild"
                          >
                             <div v-if="child.dateOfBirth">
-                                <a-date-picker :defaultValue="moment(child.dateOfBirth, 'YYYY-MM-DD')" format="YYYY-MM-DD"  @change="setDateOfBirth" />
+                                <a-date-picker :defaultValue="moment(child.dateOfBirth, 'DD-MM-YYYY')" format="DD-MM-YYYY"   @change="setDateOfBirth" />
                             </div>
                             <div v-else>
-                                <a-date-picker @change="setDateOfBirth" />
+                                <a-date-picker @change="setDateOfBirth" format="DD-MM-YYYY" />
                             </div>
                            
                         </a-form-item>
@@ -162,10 +162,10 @@
                         >
                             
                             <div v-if="child.leaveDate">
-                                <a-date-picker :defaultValue="moment(child.leaveDate, 'YYYY-MM-DD')" format="YYYY-MM-DD" @change="setLeavingDate" />
+                                <a-date-picker :defaultValue="moment(child.leaveDate, 'DD-MM-YYYY')" format="DD-MM-YYYY"  @change="setLeavingDate" />
                             </div>
                             <div v-else>
-                                <a-date-picker @change="setLeavingDate" />
+                                <a-date-picker @change="setLeavingDate" format="DD-MM-YYYY" />
                             </div>
                             
                         </a-form-item>

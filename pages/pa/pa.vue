@@ -28,72 +28,72 @@
                   okText="Submit"	
                   :confirmLoading="confirmLoading"
                   @cancel="handleCancel"
+                  width="800px"
                 >
-                <a-form layout='vertical' :form="form">
-                  <a-form-item label='Document Name' >
-                    <a-input
-                    append-icon="file"
-                    placeholder="Please enter your document name."
-                      v-decorator="[
-                        'documentName',
-                        {
-                          rules: [{
-                            required: true, message: 'Please input your document name!',
-                          }]
-                        }
-                      ]"
-                    />
-                  </a-form-item>
-                  <a-form-item label='Expiry Date' >
-                    <a-date-picker @change="setExpiryDate" />
-                  </a-form-item>
-                  <a-row :gutter="16">
-                    <a-col class="gutter-row" :span="12">
-                      <a-form-item label='Red Alert Date' >
-                        <a-date-picker @change="setRedAlertDate" />
-                      </a-form-item>
-                    </a-col>
-                    <a-col class="gutter-row" :span="12">
-                      <a-form-item label='Green Alert Date' >
-                        <a-date-picker @change="setGreenAlertDate" />
-                      </a-form-item>    
-                    </a-col>
-                  
-                  </a-row>
-                  <a-form-item label='Add Document' >
-                    <a-upload-dragger name="file" 
-                    :remove="handleRemove"
-                    :beforeUpload="beforeUpload"
-                    :multiple="false"
-                    listType="picture"
-                    accept="image/jpeg,image/png,.pdf"
-                    v-decorator="[
-                        'file',
-                        {
-                          rules: [{
-                            required: true, message: 'Please add your file!',
-                          }]
-                        }
-                      ]"
-                    >
-                      <p class="ant-upload-drag-icon">
-                        <a-icon type="inbox" />
-                      </p>
-                      <p class="ant-upload-text">Click or drag file to this area to upload</p>
-                      
-                    </a-upload-dragger>
+                  <a-form layout='vertical' :form="form">
+                    <a-form-item label='Document Name' >
+                      <a-input
+                      append-icon="file"
+                      placeholder="Please enter your document name."
+                        v-decorator="[
+                          'documentName',
+                          {
+                            rules: [{
+                              required: true, message: 'Please input your document name!',
+                            }]
+                          }
+                        ]"
+                      />
+                    </a-form-item>
+                    <a-form-item label='Expiry Date' >
+                      <a-date-picker @change="setExpiryDate" format="DD-MM-YYYY" v-bind:value=" document.expiryDate !== '' ? moment(document.expiryDate,'DD-MM-YYYY') : null"/>
+                    </a-form-item>
+                    <a-row :gutter="16">
+                      <a-col class="gutter-row" :span="12">
+                        <a-form-item label='Red Alert Date' >
+                          <a-date-picker @change="setRedAlertDate" format="DD-MM-YYYY" v-bind:value=" document.redAlertDate !== '' ? moment(document.redAlertDate,'DD-MM-YYYY') : null"/>
+                        </a-form-item>
+                      </a-col>
+                      <a-col class="gutter-row" :span="12">
+                        <a-form-item label='Green Alert Date' >
+                          <a-date-picker @change="setGreenAlertDate" format="DD-MM-YYYY" v-bind:value=" document.greenAlertDate !== '' ? moment(document.greenAlertDate,'DD-MM-YYYY') : null"/>
+                        </a-form-item>    
+                      </a-col>
                     
- 
-                  </a-form-item>
-                  <a-form-item
-                        label="Active"
-                        >
-                            <a-switch defaultChecked @change='setStatus'/>
-
-                  </a-form-item>     
-                  
-                </a-form>
-
+                    </a-row>
+                    <a-form-item label='Add Document' >
+                      <a-upload-dragger 
+                      name="avatar"
+                      listType="picture-card"
+                      class="avatar-uploader"
+                      :showUploadList="false"
+                      :beforeUpload="beforeUpload"
+                      @change="handleChange"
+                      accept="image/jpeg,image/png,.pdf"
+                      v-decorator="[
+                          'file',
+                          {
+                            rules: [{
+                              required: true, message: 'Please add your file!',
+                            }]
+                          }
+                        ]"
+                      >
+                        <img v-if="imageUrl" :src="imageUrl" alt="avatar" width="640px" />
+                        <div v-else>
+                          <a-icon :type="loading ? 'loading' : 'plus'" />
+                          <div class="ant-upload-text">Upload</div>
+                        </div>
+                        
+                      </a-upload-dragger>
+                    </a-form-item>
+                    <a-form-item
+                          label="Active"
+                          >
+                              <a-switch defaultChecked @change='setStatus'/>
+                    </a-form-item>     
+                    
+                  </a-form>
                 </a-modal>
               
             </template> 
@@ -105,6 +105,7 @@
 </template>
 <script>
 import axios from "axios";
+import moment from "moment";
 
 const columns = [
   {
@@ -188,7 +189,11 @@ const data = [];
 function onChange(pagination, filters, sorter) {
   console.log("params", pagination, filters, sorter);
 }
-
+function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+}
 export default {
   data() {
     this.cacheData = data.map(item => ({ ...item }));
@@ -199,6 +204,7 @@ export default {
       showAddDocModal: false,
       confirmLoading: false,
       file: null,
+      imageUrl: '',
       uploading: false,
       document: {
         expiryDate: "",
@@ -214,6 +220,7 @@ export default {
     this.form = this.$form.createForm(this);
   },
   methods: {
+    moment,
     onChange,
     setExpiryDate(date, dateString) {
       this.document.expiryDate = dateString;
@@ -233,9 +240,31 @@ export default {
     handleRemove(file) {
       this.file = null;
     },
+    handleChange(info) {
+      console.log("file change")
+      if (info.file.status === 'uploading') {
+        this.loading = true;
+        return;
+      }
+      if (info.file.status === 'done') {
+        // Get this url from response in real world.
+        getBase64(info.file.originFileObj, imageUrl => {
+          this.imageUrl = imageUrl;
+          this.loading = false;
+        });
+      }
+    },
     beforeUpload(file) {
+      const isJPG = file.type === 'image/jpeg' || 'image/png';
       this.file = file;
-      return false;
+      if (!isJPG) {
+        this.$message.error('You can only upload JPG file!');
+      }
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        this.$message.error('Image must smaller than 2MB!');
+      }
+      return isJPG && isLt2M;
     },
     viewDocs(id) {
       this.$router.push(`/view-docs/${id}`);
@@ -262,8 +291,26 @@ export default {
               if (res.data.success) {
                 this.confirmLoading = false;
                 this.$message.success(res.data.message);
-                this.document = null;
-                this.file = null;
+                this.uploading = false;
+                this.document.documentName = '';
+                this.document.userId = '';
+                this.document.userName = '';
+                this.document.redAlertDate = '';
+                this.document.expiryDate = '';
+                this.document.greenAlertDate = '';
+                this.document.status = '';
+                this.imageUrl = '';
+                this.isDisabledUploadButton = false;
+                this.confirmLoading = false;
+                this.$message.success(res.data.message);
+                this.form.setFieldsValue({
+                  documentName: '',
+                });
+                this.form.setFieldsValue({
+                  file: null,
+
+                });
+                
                 this.showAddDocModal = false;
               }
               if (!res.data.success) {
@@ -282,15 +329,15 @@ export default {
       console.log("Clicked cancel button");
       this.showAddDocModal = false;
     },
-    handleChange(value, key, column) {
-      console.log(value, key, column);
-      const newData = [...this.data];
-      const target = newData.filter(item => key === item.key)[0];
-      if (target) {
-        target[column] = value;
-        this.data = newData;
-      }
-    },
+    // handleChange(value, key, column) {
+    //   console.log(value, key, column);
+    //   const newData = [...this.data];
+    //   const target = newData.filter(item => key === item.key)[0];
+    //   if (target) {
+    //     target[column] = value;
+    //     this.data = newData;
+    //   }
+    // },
     edit(id) {
       this.$router.push(`/pa/update-pa/${id}`);
     },
