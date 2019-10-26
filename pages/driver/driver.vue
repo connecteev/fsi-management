@@ -80,7 +80,7 @@
                         }
                       ]"
                     >
-                      <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
+                      <img v-if="imageUrl" :src="imageUrl" alt="avatar"  width="640px" />
                       <div v-else>
                         <a-icon :type="loading ? 'loading' : 'plus'" />
                         <div class="ant-upload-text">Upload</div>
@@ -194,9 +194,9 @@ function onChange(pagination, filters, sorter) {
 }
 
 function getBase64(img, callback) {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result));
+  reader.readAsDataURL(img);
 }
 
 export default {
@@ -210,7 +210,7 @@ export default {
       confirmLoading: false,
       showUploadFile: false,
       file: null,
-      imageUrl: '',
+      imageUrl: "",
       uploading: false,
       isDisabledUploadButton: false,
       document: {
@@ -249,11 +249,11 @@ export default {
       this.isDisabledUploadButton = false;
     },
     handleChange(info) {
-      if (info.file.status === 'uploading') {
+      if (info.file.status === "uploading") {
         this.loading = true;
         return;
       }
-      if (info.file.status === 'done') {
+      if (info.file.status === "done") {
         // Get this url from response in real world.
         getBase64(info.file.originFileObj, imageUrl => {
           this.imageUrl = imageUrl;
@@ -262,14 +262,14 @@ export default {
       }
     },
     beforeUpload(file) {
-      const isJPG = file.type === 'image/jpeg' || 'image/png';
+      const isJPG = file.type === "image/jpeg" || "image/png";
       this.file = file;
       if (!isJPG) {
-        this.$message.error('You can only upload JPG or Png file!');
+        this.$message.error("You can only upload JPG or Png file!");
       }
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
-        this.$message.error('Image must smaller than 2MB!');
+        this.$message.error("Image must smaller than 2MB!");
       }
       return isJPG && isLt2M;
     },
@@ -311,31 +311,30 @@ export default {
           formData.append("greenAlertDate", this.document.greenAlertDate);
           formData.append("status", this.document.status);
           this.uploading = true;
-          
+
           axios
             .post("/api/add-document", formData)
             .then(res => {
               if (res.data.success) {
                 this.uploading = false;
-                this.document.documentName = '';
-                this.document.userId = '';
-                this.document.userName = '';
-                this.document.redAlertDate = '';
-                this.document.expiryDate = '';
-                this.document.greenAlertDate = '';
-                this.document.status = '';
-                this.imageUrl = '';
+                this.document.documentName = "";
+                this.document.userId = "";
+                this.document.userName = "";
+                this.document.redAlertDate = "";
+                this.document.expiryDate = "";
+                this.document.greenAlertDate = "";
+                this.document.status = "";
+                this.imageUrl = "";
                 this.isDisabledUploadButton = false;
                 this.confirmLoading = false;
                 this.$message.success(res.data.message);
                 this.form.setFieldsValue({
-                  documentName: '',
+                  documentName: ""
                 });
                 this.form.setFieldsValue({
-                  file: null,
-
+                  file: null
                 });
-                
+
                 this.showAddDocModal = false;
               }
               if (!res.data.success) {
@@ -351,9 +350,9 @@ export default {
       });
     },
     handleCancel(e) {
-      this.document.documentName = '';
+      this.document.documentName = "";
       this.file = null;
-      this.imageUrl = '';
+      this.imageUrl = "";
       this.showAddDocModal = false;
     },
     getDrivers() {

@@ -36,7 +36,7 @@
                     
                     <a-col class="gutter-row" :span="8">
                       <a-form-item label='Red Alert Date'   v-if="isUser">
-                            <div v-if="document.expiryDate">
+                            <div v-if="document.redAlertDate">
                                 <a-date-picker :defaultValue="moment(document.redAlertDate, 'DD-MM-YYYY')" format="DD-MM-YYYY" @change="setRedAlertDate" />
                             </div>
                             <div v-else>
@@ -46,7 +46,7 @@
                     </a-col>
                     <a-col class="gutter-row" :span="8">
                       <a-form-item label='Green Alert Date' v-if="isUser">
-                          <div v-if="document.expiryDate">
+                          <div v-if="document.greenAlertDate">
                                 <a-date-picker :defaultValue="moment(document.greenAlertDate, 'DD-MM-YYYY')" format="DD-MM-YYYY" @change="setGreenAlertDate" />
                             </div>
                             <div v-else>
@@ -106,9 +106,9 @@ import axios from "axios";
 import moment from "moment";
 
 function getBase64(img, callback) {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result));
+  reader.readAsDataURL(img);
 }
 export default {
   data() {
@@ -117,7 +117,7 @@ export default {
       loading: false,
       isUser: false,
       file: null,
-      imageUrl: '',
+      imageUrl: "",
       document: {
         expiryDate: "",
         redAlertDate: "",
@@ -178,7 +178,6 @@ export default {
       e.preventDefault();
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
-          
           const { file } = this;
           const formData = new FormData();
           formData.append("file", file);
@@ -196,7 +195,7 @@ export default {
             .then(res => {
               if (res.data.success) {
                 this.loading = false;
-                
+
                 this.$message.success(res.data.message);
 
                 this.$router.push("/view-docs/" + this.document.userId);
@@ -219,11 +218,11 @@ export default {
       this.file = null;
     },
     handleChange(info) {
-      if (info.file.status === 'uploading') {
+      if (info.file.status === "uploading") {
         this.loading = true;
         return;
       }
-      if (info.file.status === 'done') {
+      if (info.file.status === "done") {
         // Get this url from response in real world.
         getBase64(info.file.originFileObj, imageUrl => {
           this.imageUrl = imageUrl;
@@ -232,17 +231,17 @@ export default {
       }
     },
     beforeUpload(file) {
-      const isJPG = file.type === 'image/jpeg' || 'image/png';
+      const isJPG = file.type === "image/jpeg" || "image/png";
       this.file = file;
       if (!isJPG) {
-        this.$message.error('You can only upload JPG or Png file!');
+        this.$message.error("You can only upload JPG or Png file!");
       }
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
-        this.$message.error('Image must smaller than 2MB!');
+        this.$message.error("Image must smaller than 2MB!");
       }
       return isJPG && isLt2M;
-    },
+    }
   },
   created() {
     this.getDocDetails();
