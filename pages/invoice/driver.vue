@@ -47,15 +47,11 @@
                       <td colspan="2">
                           <table>
                               <tr>
-                                  <td class="title">
-                                      <img src="https://fsiservice.co.uk/tms/assets/dist/img/invlogo.png" style="width:100%; max-width:300px;">
+                                  <td class="title" style="width:100%; max-width:300px;">
+                                      <!-- <img src="../../static/fsi-logo.png" style="width:100%; max-width:300px;"> -->
                                   </td>
                                   
-                                  <!-- <td>
-                                      Invoice #: 123<br>
-                                      Created: January 1, 2015<br>
-                                      Due: February 1, 2015
-                                  </td> -->
+                                  
                               </tr>
                           </table>
                       </td>
@@ -65,19 +61,23 @@
                       <td colspan="2">
                           <table>
                               <tr>
-                                  <td>
+                                  <td class="pt-5">
+                                    
                                       {{driverInfo.name}}<br>
                                       {{driverInfo.address.streetAddress}}<br>
                                       {{driverInfo.address.town}}, {{driverInfo.address.country}} {{driverInfo.address.postalCode}}
                                   </td>
                                   
                                   <td>
-                                      United Car Services.<br>
+                                    <img src="../../static/fsi-logo.png" style="width:150px; max-width:300px;"><br>
+                                      FSI.<br>
                                       Surrey, United Kingdom<br>
-                                      07908023168<br>
-                                      unit3dcars@yahoo.co.uk
+                                      07865500851<br>
+                                      fsiuk3@gmail.com
                                   </td>
+                                  
                               </tr>
+                              
                           </table>
                       </td>
                   </tr>

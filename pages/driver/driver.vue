@@ -9,18 +9,87 @@
             
             <template slot="operation" slot-scope="text, record, index">
               <div class='editable-row-operations'>
-                <a @click="showAddDocModal = !showAddDocModal, document.userId = record._id, document.userName = record.driver.name">Add Doc</a>
-                <a @click="viewDocs(record._id)">View Docs</a>
-                <a-divider type="vertical" />
+                
+                <a-button type="primary" @click="showModal()">Add Note</a-button>
+                <a-button  @click="viewNotes(record._id), showModalViewNotes = !showModalViewNotes">View Notes</a-button>
+                <a-modal v-model="showModalViewNotes" width="1200px">
+                   <template slot="footer">
+                    <a-button @click="handleCancel"></a-button>                    
+                  </template>
+                  <div style="background-color: #ececec; padding: 20px;" class="mt-4">
+                    <a-row :gutter="24">
+                      <a-col :span="8" v-if="userNotes.length < 1">
+                        <h2>User have no notes.</h2>
+                      </a-col>
+                      <a-col v-else>
+                        <a-col :span="8" v-for="(item, index) in userNotes" :key="index" >
+                          <a-card :title="item.note.noteName" :bordered="false">
+                            
+                            <div v-if="!readMoreActivated">
+                              <div v-if="item.note.noteDetails.length > 60">
+                                {{item.note.noteDetails.length}}
+                                {{ item.note.noteDetails.slice(0, 60) }}
+                                <br>
+                                <a v-if="item.note.noteDetails.length > 60" @click="readMoreActivated = true">Read more</a>
+                              </div>
+                              <div v-else>
+                                {{ item.note.noteDetails }}
+                              </div>
+                              
+                            </div>
+                            <div v-else>
+                                {{ item.note.noteDetails }}
+                                <br>
+                                <a @click="readMoreActivated = false">Read less</a>
+                            </div>
+                            
+                            <template class="ant-card-actions" slot="actions">
+                              <a-tooltip placement="top" >
+                                <template slot="title">
+                                  <span>Edit</span>
+                                </template>
+                                <a-icon type="edit" @click="editNote(item._id), contentEditable = true" />
+                              </a-tooltip>
+                              <a-tooltip placement="top" >
+                                <template slot="title">
+                                  <span>Delete</span>
+                                </template>
+                                <a-popconfirm title="Are you sure delete this file?" @confirm="deleteNote(item._id)" @cancel="cancel" okText="Yes" cancelText="No">
+                                  <a-icon type="delete" />
+                                </a-popconfirm>
+                              </a-tooltip>
+                            </template>
+                          </a-card>
+                        </a-col>
+                       
+                      </a-col>
+                       
+                    </a-row>
+                   <a-pagination v-if="userNotes.length > 0" class="my-4" :v-model="1" :total="userNotes.length" /> 
+                  </div>
+                </a-modal>
+               
 
-                <a @click="() => edit(record._id)">Edit</a>
-                 <a-divider type="vertical" />
+                <a-button @click="showAddDocModal = !showAddDocModal, document.userId = record._id, document.userName = record.driver.name">Add Doc</a-button>
+                <a-button @click="viewDocs(record._id)">View Docs</a-button>
+               
+
+                <a-button @click="() => edit(record._id)">Edit</a-button>
+                 
                 <a-popconfirm
                 v-if="data.length"
                 title="Sure to delete?"
                 @confirm="() => onDelete(record._id)">
-                <a href="javascript:;">Delete</a>
+                <a-button  type="danger" href="javascript:;">Delete</a-button>
               </a-popconfirm>
+              <a-modal v-if="!isUpdateNote" title="Add note" v-model="visible" @ok="handleOk(record._id)" okText="Add note">
+                <a-input class="my-4" v-model="addNote.noteName" placeholder="Note Name" />
+                <a-textarea v-model="addNote.noteDetails" placeholder="Note Details" :rows="15" />
+              </a-modal>
+              <a-modal v-else title="Update note" v-model="visible" @ok="updateNote()" okText="Update note">
+                <a-input class="my-4" v-model="addNote.noteName" placeholder="Note Name" />
+                <a-textarea v-model="addNote.noteDetails" placeholder="Note Details" :rows="15" />
+              </a-modal>
               </div>
                 <a-modal
                   title="Add Docoment"
@@ -130,7 +199,7 @@ const columns = [
   {
     title: "Phone",
     dataIndex: "driver.contactNumber",
-    width: "7%",
+    width: "5%",
     scopedSlots: { customRender: "phone" },
     sorter: (a, b) =>
       a.driver.contactNumber.length - b.driver.contactNumber.length
@@ -146,7 +215,7 @@ const columns = [
     title: "Address",
     dataIndex: "driver.address.streetAddress",
     scopedSlots: { customRender: "address" },
-    width: "15%",
+    width: "7%",
     sorter: (a, b) =>
       a.driver.address.streetAddress.length -
       b.driver.address.streetAddress.length
@@ -156,7 +225,7 @@ const columns = [
     title: "Status",
     dataIndex: "driver.status",
     scopedSlots: { customRender: "status" },
-    width: "5%",
+    width: "3%",
     filters: [
       {
         text: "Active",
@@ -174,7 +243,7 @@ const columns = [
   {
     title: "Action",
     dataIndex: "operation",
-    width: "20%",
+    width: "30%",
     scopedSlots: { customRender: "operation" }
   }
 ];
@@ -220,7 +289,15 @@ export default {
         status: "Active",
         userId: "",
         userName: ""
-      }
+      },
+      visible: false,
+      readMoreActivated: false,
+      showModalViewNotes: false,
+      contentEditable: false,
+      addNote: {},
+      userNotes: [],
+      isUpdateNote: false,
+      noteId: '',
     };
   },
   beforeCreate() {
@@ -272,6 +349,69 @@ export default {
         this.$message.error("Image must smaller than 2MB!");
       }
       return isJPG && isLt2M;
+    },
+    showModal() {
+      this.visible = true;
+    },
+    viewNotes(userId) {
+      axios.post("/api/get-user-note", {userId}).then( res => {
+        this.userNotes = res.data.notes;
+      })
+    },
+    deleteNote(id) {
+      axios.post("/api/delete-note", { id }).then(res => {
+        if (res.data.success) {
+          this.viewNotes();
+          this.$message.success(res.data.message);
+        }
+      });
+    },
+    handleCancel() {
+        console.log("function clicked")
+        this.showModalViewNotes = false;
+    },
+    updateNote(){
+      axios.post("/api/update-note", { id: this.noteId, noteName: this.addNote.noteName , noteDetails: this.addNote.noteDetails})
+        .then(res => {
+          if(res.data.success){
+            this.$message.success(res.data.message);
+          }else{
+            this.$message.warning(res.data.message);
+          }
+        })
+      this.visible = false;
+    },
+    editNote(id) {
+      this.noteId= id;
+      this.loading = true;
+      this.showModalViewNotes = false;
+      this.isUpdateNote = true;
+      axios
+        .post("/api/get-single-note", { id })
+        .then(res => {
+          if (res.data.success) {
+            this.visible = true,
+            this.loading = false,
+            this.addNote = res.data.doc.note
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    handleOk(userId) {
+      this.addNote.userId = userId;
+      axios.post("/api/add-note", this.addNote)
+        .then(res => {
+          if(res.data.success){
+            this.$message.success(res.data.message);
+          }
+        })
+      this.visible = false;
+    },
+    cancel(e) {
+      console.log(e);
+      this.$message.error("Click on No");
     },
 
     edit(id) {

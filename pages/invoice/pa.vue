@@ -48,7 +48,7 @@
                           <table>
                               <tr>
                                   <td class="title">
-                                      <img src="https://fsiservice.co.uk/tms/assets/dist/img/invlogo.png" style="width:100%; max-width:300px;">
+                                      <img src="../../static/fsi-logo.png" style="width:100%; max-width:300px;">
                                   </td>
                                   
                                   <!-- <td>
@@ -71,11 +71,11 @@
                                       {{paInfo.address.town}}, {{paInfo.address.country}} {{paInfo.address.postalCode}}
                                   </td>
                                   
-                                  <td>
-                                      United Car Services.<br>
+                                   <td>
+                                      FSI.<br>
                                       Surrey, United Kingdom<br>
-                                      07908023168<br>
-                                      unit3dcars@yahoo.co.uk
+                                      07865500851<br>
+                                      fsiuk3@gmail.com
                                   </td>
                               </tr>
                           </table>

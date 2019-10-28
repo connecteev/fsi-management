@@ -30,13 +30,13 @@
                         </a-form-item>
                         <a-form-item
                         v-bind="formItemLayout"
-                        label="Dad Number"
+                        label="Dad Mobile"
                         >
                             <a-input
                                 v-decorator="[
                                 'dadPhone',
                                 {
-                                    rules: [{ required: true, message: 'Please input dad number!' }],
+                                    rules: [{ required: true, message: 'Please input dad mobile!' }],
                                 }
                                 ]"
                               
@@ -45,13 +45,13 @@
                         </a-form-item>
                         <a-form-item
                         v-bind="formItemLayout"
-                        label="Mom Number"
+                        label="Mum mobile"
                         >
                             <a-input
                                 v-decorator="[
                                 'momphone',
                                 {
-                                    rules: [{ required: true, message: 'Please input mom number!' }],
+                                    rules: [{ required: true, message: 'Please input mum mobile!' }],
                                 }
                                 ]"
                                 
@@ -94,7 +94,7 @@
                         </a-form-item>
                          <a-form-item
                         v-bind="formItemLayout"
-                        label="Postal Code"
+                        label="Post Code"
                         >
                             <a-input
                                 v-model="child.address.postalCode"

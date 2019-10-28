@@ -95,7 +95,7 @@
                     <a-col :span="12">
                         <a-form-item
                         v-bind="formItemLayout"
-                        label="Postal Code"
+                        label="Post Code"
                         >
                             <a-input
                                 v-model="pa.address.postalCode"

@@ -12,48 +12,58 @@
                 <a-button  @click="viewNotes(record._id), showModalViewNotes = !showModalViewNotes">View Notes</a-button>
                 <a-modal v-model="showModalViewNotes" width="1200px">
                    <template slot="footer">
-                    <a-button key="back" @click="handleCancel">Return</a-button>                    
+                    <a-button key="back" @click="handleCancel()">Return</a-button>                    
                   </template>
                   <div style="background-color: #ececec; padding: 20px;" class="mt-4">
                     <a-row :gutter="24">
-                      <a-col :span="8" v-for="(item, index) in userNotes" :key="index" >
-                        <a-card :title="item.note.noteName" :bordered="false">
-                          <p >{{item.note.noteDetails}}</p>
-                          <div v-if="!readMoreActivated">
-                            <div v-if="item.note.noteDetails.length > 30">
-                              {{ item.note.noteDetails.slice(0, 30) }}
-                              <br>
-                              <a v-if="item.note.noteDetails.length > 30" @click="readMoreActivated = true">Read more</a>
+                      <a-col :span="8" v-if="userNotes.length < 1">
+                        <h2>User have no notes.</h2>
+                      </a-col>
+                      <a-row :gutter="24" v-else>
+                        <a-col :span="8" v-for="(item, index) in userNotes" :key="index" >
+                          <a-card :title="item.note.noteName" :bordered="false">
+                            
+                            <div v-if="!readMoreActivated">
+                              <div v-if="item.note.noteDetails.length > 60">
+                                {{item.note.noteDetails.length}}
+                                {{ item.note.noteDetails.slice(0, 60) }}
+                                <br>
+                                <a v-if="item.note.noteDetails.length > 60" @click="readMoreActivated = true">Read more</a>
+                              </div>
+                              <div v-else>
+                                {{ item.note.noteDetails }}
+                              </div>
+                              
+                            </div>
+                            <div v-else>
+                                {{ item.note.noteDetails }}
+                                <br>
+                                <a @click="readMoreActivated = false">Read less</a>
                             </div>
                             
-                          </div>
-                          <div v-else>
-                              {{ item.note.noteDetails }}
-                              <br>
-                              <a @click="readMoreActivated = false">Read less</a>
-                            </div>
-                          
-                          <template class="ant-card-actions" slot="actions">
-                            <a-tooltip placement="top" >
-                              <template slot="title">
-                                <span>Edit</span>
-                              </template>
-                              <a-icon type="edit" @click="editNote(item._id), contentEditable = true" />
-                            </a-tooltip>
-                            <a-tooltip placement="top" >
-                              <template slot="title">
-                                <span>Delete</span>
-                              </template>
-                              <a-popconfirm title="Are you sure delete this file?" @confirm="deleteNote(item._id)" @cancel="cancel" okText="Yes" cancelText="No">
-                                <a-icon type="delete" />
-                              </a-popconfirm>
-                            </a-tooltip>
-                          </template>
-                        </a-card>
-                      </a-col>
+                            <template class="ant-card-actions" slot="actions">
+                              <a-tooltip placement="top" >
+                                <template slot="title">
+                                  <span>Edit</span>
+                                </template>
+                                <a-icon type="edit" @click="editNote(item._id), contentEditable = true" />
+                              </a-tooltip>
+                              <a-tooltip placement="top" >
+                                <template slot="title">
+                                  <span>Delete</span>
+                                </template>
+                                <a-popconfirm title="Are you sure delete this file?" @confirm="deleteNote(item._id)" @cancel="cancel" okText="Yes" cancelText="No">
+                                  <a-icon type="delete" />
+                                </a-popconfirm>
+                              </a-tooltip>
+                            </template>
+                          </a-card>
+                        </a-col>
                         
+                      </a-row>
+                      
                     </a-row>
-                    <a-pagination class="my-4" :v-model="1" :total="userNotes.length" />
+                    <a-pagination v-if="userNotes.length > 0" class="my-4" :v-model="1" :total="userNotes.length" />  
                   </div>
                 </a-modal>
                 <a-button @click="() => edit(record._id)">Edit</a-button>
@@ -67,11 +77,11 @@
               
               <a-modal v-if="!isUpdateNote" title="Add note" v-model="visible" @ok="handleOk(record._id)" okText="Add note">
                 <a-input class="my-4" v-model="addNote.noteName" placeholder="Note Name" />
-                <a-textarea v-model="addNote.noteDetails" placeholder="Note Details" :rows="4" />
+                <a-textarea v-model="addNote.noteDetails" placeholder="Note Details" :rows="15" />
               </a-modal>
               <a-modal v-else title="Update note" v-model="visible" @ok="updateNote()" okText="Update note">
                 <a-input class="my-4" v-model="addNote.noteName" placeholder="Note Name" />
-                <a-textarea v-model="addNote.noteDetails" placeholder="Note Details" :rows="4" />
+                <a-textarea v-model="addNote.noteDetails" placeholder="Note Details" :rows="15" />
               </a-modal>
             </template> 
           </a-table>
@@ -102,7 +112,7 @@ const columns = [
     sorter: (a, b) => a.child.email.length - b.child.email.length
   },
   {
-    title: "Dad Phone",
+    title: "Dad mobile",
     dataIndex: "child.contactNumber",
     width: "10%",
     scopedSlots: { customRender: "phone" },
@@ -208,7 +218,7 @@ export default {
         }
       });
     },
-    handleCancel(e) {
+    handleCancel() {
         this.showModalViewNotes = false;
     },
     updateNote(){
