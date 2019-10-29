@@ -116,17 +116,17 @@
                     />
                   </a-form-item>
                   <a-form-item label='Expiry Date' >
-                    <a-date-picker @change="setExpiryDate" format="DD-MM-YYYY" v-bind:value=" document.expiryDate !== '' ? moment(document.expiryDate,'DD-MM-YYYY') : null"/>
+                    <a-date-picker @change="setExpiryDate" format="YYYY-MM-DD" v-bind:value=" document.expiryDate !== '' ? moment(document.expiryDate,'DD-MM-YYYY') : null"/>
                   </a-form-item>
                   <a-row :gutter="16">
                     <a-col class="gutter-row" :span="12">
                       <a-form-item label='Red Alert Date' >
-                        <a-date-picker @change="setRedAlertDate" format="DD-MM-YYYY" v-bind:value=" document.redAlertDate !== '' ? moment(document.redAlertDate,'DD-MM-YYYY') : null"/>
+                        <a-date-picker @change="setRedAlertDate" format="YYYY-MM-DD" v-bind:value=" document.redAlertDate !== '' ? moment(document.redAlertDate,'DD-MM-YYYY') : null"/>
                       </a-form-item>
                     </a-col>
                     <a-col class="gutter-row" :span="12">
                       <a-form-item label='Green Alert Date' >
-                        <a-date-picker @change="setGreenAlertDate" format="DD-MM-YYYY" v-bind:value=" document.greenAlertDate !== '' ? moment(document.greenAlertDate,'DD-MM-YYYY') : null"/>
+                        <a-date-picker @change="setGreenAlertDate" format="YYYY-MM-DD" v-bind:value=" document.greenAlertDate !== '' ? moment(document.greenAlertDate,'DD-MM-YYYY') : null"/>
                       </a-form-item>    
                     </a-col>
                   
