@@ -76,6 +76,8 @@ exports.generate_invoices = function (req, res) {
   );
 };
 
+
+
 // date check between a range
 function dateCheck(from, to, check) {
   var fDate, lDate, cDate;

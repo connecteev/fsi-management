@@ -1,10 +1,4 @@
 
-
-# 
-GET http://localhost:3000/api/get-attendances
+GET http://localhost:3000/api/get-expired-document HTTP/1.1
 
 
-
-GET http://localhost:3000/api/delete-all-attendance
-
-POST http://localhost:3000/api/get_driver_attendance

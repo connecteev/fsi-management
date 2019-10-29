@@ -25,10 +25,10 @@
                     <a-col class="gutter-row" :span="8">
                         <a-form-item label='Expiry Date' v-if="isUser">
                             <div v-if="document.expiryDate">
-                                <a-date-picker :defaultValue="moment(document.expiryDate, 'DD-MM-YYYY')" format="DD-MM-YYYY" @change="setExpiryDate" />
+                                <a-date-picker :defaultValue="moment(document.expiryDate, 'YYYY-MM-DD')" format="YYYY-MM-DD" @change="setExpiryDate" />
                             </div>
                             <div v-else>
-                                <a-date-picker @change="setExpiryDate" format="DD-MM-YYYY" />
+                                <a-date-picker @change="setExpiryDate" format="YYYY-MM-DD" />
                             </div>
                             
                         </a-form-item>
@@ -37,7 +37,7 @@
                     <a-col class="gutter-row" :span="8">
                       <a-form-item label='Red Alert Date'   v-if="isUser">
                             <div v-if="document.redAlertDate">
-                                <a-date-picker :defaultValue="moment(document.redAlertDate, 'DD-MM-YYYY')" format="DD-MM-YYYY" @change="setRedAlertDate" />
+                                <a-date-picker :defaultValue="moment(document.redAlertDate, 'YYYY-MM-DD')" format="YYYY-MM-DD" @change="setRedAlertDate" />
                             </div>
                             <div v-else>
                                 <a-date-picker @change="setRedAlertDate" />
@@ -47,7 +47,7 @@
                     <a-col class="gutter-row" :span="8">
                       <a-form-item label='Green Alert Date' v-if="isUser">
                           <div v-if="document.greenAlertDate">
-                                <a-date-picker :defaultValue="moment(document.greenAlertDate, 'DD-MM-YYYY')" format="DD-MM-YYYY" @change="setGreenAlertDate" />
+                                <a-date-picker :defaultValue="moment(document.greenAlertDate, 'YYYY-MM-DD')" format="YYYY-MM-DD" @change="setGreenAlertDate" />
                             </div>
                             <div v-else>
                                 <a-date-picker @change="setGreenAlertDate" />
@@ -65,14 +65,7 @@
                       :beforeUpload="beforeUpload"
                       @change="handleChange"
                       accept="image/jpeg,image/png,.pdf"
-                      v-decorator="[
-                          'file',
-                          {
-                            rules: [{
-                              required: true, message: 'Please add your file!',
-                            }]
-                          }
-                        ]"
+                      
                       >
                         <img v-if="imageUrl" :src="imageUrl" alt="Document | File Image" width="640px" />
                         <img v-else-if="document.documentPath" :src="document.documentPath" alt="Document | File Image" width="640px">

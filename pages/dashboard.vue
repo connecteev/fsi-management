@@ -112,6 +112,16 @@
             </template> 
           </a-table>
         </v-flex>  
+        <v-flex lg12 sm12 xs12>
+          <h4>Document Expiring Soon</h4>
+          <a-table :columns="expiringDocColumns" :dataSource="expiringDocData" @change="onChange" rowKey="_id" :loading="loading">
+            <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
+            <a slot="date" slot-scope="text" href="javascript:;">{{ moment(text).format("DD-MM-YYYY") }}</a>
+            <template slot="operation" slot-scope="text, record, index">
+              <a-button type="primary" @click="editDoc(record._id)"><a-icon type="edit" /></a-button>
+            </template> 
+          </a-table>
+        </v-flex> 
       </v-layout>
     </v-container>
   </div>
@@ -119,7 +129,6 @@
 
 <script>
 import API from "@/api";
-
 import MiniStatistic from "@/components/widgets/statistic/MiniStatistic";
 import PostListCard from "@/components/widgets/card/PostListCard";
 import ProfileCard from "@/components/widgets/card/ProfileCard";
@@ -170,6 +179,44 @@ const paColumns = [
     scopedSlots: { customRender: "operation" }
   }
 ];
+
+const expiringDocColumns = [
+  {
+    title: "User Name",
+    dataIndex: "document.userName",
+    width: "20%",
+    scopedSlots: { customRender: "name" },
+    // specify the condition of filtering result
+    // here is that finding the name started with `value`
+    onFilter: (value, record) => record.name.indexOf(value) === 0,
+    sorter: (a, b) => a.document.userName.length - b.document.userName.length
+  },
+  {
+    title: "Document Name",
+    dataIndex: "document.documentName",
+    width: "20%",
+    scopedSlots: { customRender: "name" },
+    // specify the condition of filtering result
+    // here is that finding the name started with `value`
+    onFilter: (value, record) => record.name.indexOf(value) === 0,
+    sorter: (a, b) => a.document.documentName.length - b.document.documentName.length
+  },
+  {
+    title: "Expired Date",
+    dataIndex: "document.expiryDate",
+    width: "20%",
+    scopedSlots: { customRender: "date" },
+    // specify the condition of filtering result
+    // here is that finding the name started with `value`
+    onFilter: (value, record) => record.name.indexOf(value) === 0,
+  },
+  {
+    title: "Edit",
+    dataIndex: "operation",
+    width: "20%",
+    scopedSlots: { customRender: "operation" }
+  }
+];
 const data = [];
 
 function onChange(pagination, filters, sorter) {
@@ -195,9 +242,11 @@ export default {
       data,
       columns,
       paColumns,
+      expiringDocColumns,
       paData,
       allDriver: [],
       allPa: [],
+      expiringDocData: [],
       loading: false,
       showModal: false,
       showPaModal: false,
@@ -225,6 +274,11 @@ export default {
     handleCancel(e) {
       this.showModal = false;
     },
+    editDoc(id) {
+      
+      this.$router.push(`/view-docs/edit/${id}`);
+    },
+
     checkShifts(e) {
       if (e.target.value == "M") {
         this.checkedShiftM = e.target.checked;
@@ -435,6 +489,13 @@ export default {
         }
       });
     },
+    getAllExpiringDoc(){
+      axios.get("/api/get-expired-document").then( res => {
+        if (res.data.success) {
+          this.expiringDocData =  res.data.documents.sort();
+        }
+      });
+    },
     getAllPa() {
       this.loading = true;
       axios.get("/api/get-all-pa").then(res => {
@@ -453,6 +514,7 @@ export default {
     this.getAllAttendence();
     this.getPa();
     this.getAllPa();
+    this.getAllExpiringDoc()
   }
 };
 </script>

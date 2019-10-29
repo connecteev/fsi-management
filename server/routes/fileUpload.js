@@ -17,6 +17,9 @@ router.post("/api/get-user-document", file_upload_controller.get_user_document);
 // Get request to find a single document
 router.post("/api/get-single-document", file_upload_controller.get_single_document);
 
+// Get expired document's 
+router.get("/api/get-expired-document", file_upload_controller.get_expire_documents);
+
 // POST request to update a document details
 router.post("/api/update-document", uploadDocument.parser.single('file'), file_upload_controller.update_document);
 

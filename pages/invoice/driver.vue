@@ -7,7 +7,7 @@
           <a-table :columns="columns" :dataSource="data" @change="onChange" rowKey="_id" :loading="loading">
             <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>          
             <template slot="daterange" slot-scope="text, record, index">
-              <a-range-picker @change="onChange">
+              <a-range-picker @change="onChange" >
                 <template slot="dateRender" slot-scope="current">
                   <div class="ant-calendar-date" :style="getCurrentStyle(current)">
                     {{current.date()}}

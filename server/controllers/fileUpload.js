@@ -1,6 +1,9 @@
 // load up the file upload model
 let FileUpload = require("../model/fileUpload");
 const cloudinary = require("cloudinary").v2;
+let moment = require('moment');
+
+
 
 
 // Handle - add document  from the client app on POST request
@@ -103,7 +106,26 @@ exports.update_document = function (req, res) {
   })
 }
 
-
+// get user expire document - Post Request 
+exports.get_expire_documents = function(req, res){
+  FileUpload.find({
+    'document.expiryDate':{ 
+           "$gte": moment().format("YYYY-MM-DD"), 
+           "$lt": moment().add(3, 'months').format("YYYY-MM-DD")
+        }
+  })
+  .sort({'document.expiryDate': 1 })
+  .exec()
+  .then(documents => {
+    if (!documents) {
+      return res.send("No documents found")
+    }
+    res.send({
+      success: true,
+      documents
+    })
+  })
+}
 // Delete a document
 exports.delete_document = function (req, res) {
   FileUpload.findByIdAndRemove(req.body.id).then(doc => {
