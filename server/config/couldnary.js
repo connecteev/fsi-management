@@ -1,6 +1,5 @@
 module.exports = {
-    cloudinaryName: 'dg687tbay',
-    cloudinaryApi: '632744768638433',
-    cloudinarySecret: 'UWUmp4_SUlAXq7M5Bj-HVIjhVx0'
+  cloudinaryName: 'dwwgohzgh',
+  cloudinaryApi: '597322398434299',
+  cloudinarySecret: 'iTUzvdW9s2j7U4au-1YcN1fPEvs'
 };
-  

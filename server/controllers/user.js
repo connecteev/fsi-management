@@ -177,7 +177,7 @@ exports.user_forgotPassword = function (req, res) {
       let hash = bcrypt.hashSync(genStr, saltRounds);
       let updateHash = hash.replace(/[/]/g, '').replace(/[$]/g, '').replace(/[.]/g, '');
       let mailOptions;
-      const link = 'http://localhost:3000/reset-password/' + updateHash;
+      const link = 'dms.unitedcarsservice.co.uk/reset-password/' + updateHash;
       const message = "Reset your password"
 
       if (user.local.admin) {

@@ -10,13 +10,15 @@ cloudinary.config({
 });
 
 const storage = cloudinaryStorage({
-    cloudinary: cloudinary,
-    folder: "testUploads",
-    allowedFormats: ["jpg", "png", "pdf", "doc", "docx"]
+  cloudinary: cloudinary,
+  folder: "uploadedFiles",
+  allowedFormats: ["jpg", "png", "pdf", "doc", "docx"]
 });
 
-const parser = multer({ storage: storage });
+const parser = multer({
+  storage: storage
+});
 
 module.exports = {
-    parser
+  parser
 };
