@@ -104,12 +104,12 @@ const columns = [
     sorter: (a, b) => a.child.name.length - b.child.name.length
   },
   {
-    title: "Email",
-    dataIndex: "child.email",
-    width: "10%",
-    scopedSlots: { customRender: "email" },
+    title: "D.O.B",
+    dataIndex: "child.dateOfBirth",
+    width: "8%",
+    scopedSlots: { customRender: "dateOfBirth" },
     onFilter: (value, record) => record.name.indexOf(value) === 0,
-    sorter: (a, b) => a.child.email.length - b.child.email.length
+    sorter: (a, b) => a.child.dateOfBirth.length - b.child.dateOfBirth.length
   },
   {
     title: "Dad mobile",
@@ -188,7 +188,7 @@ export default {
       addNote: {},
       userNotes: [],
       isUpdateNote: false,
-      noteId: '',
+      noteId: ""
     };
   },
   methods: {
@@ -206,9 +206,9 @@ export default {
       this.visible = true;
     },
     viewNotes(userId) {
-      axios.post("/api/get-user-note", {userId}).then( res => {
+      axios.post("/api/get-user-note", { userId }).then(res => {
         this.userNotes = res.data.notes;
-      })
+      });
     },
     deleteNote(id) {
       axios.post("/api/delete-note", { id }).then(res => {
@@ -219,21 +219,26 @@ export default {
       });
     },
     handleCancel() {
-        this.showModalViewNotes = false;
+      this.showModalViewNotes = false;
     },
-    updateNote(){
-      axios.post("/api/update-note", { id: this.noteId, noteName: this.addNote.noteName , noteDetails: this.addNote.noteDetails})
+    updateNote() {
+      axios
+        .post("/api/update-note", {
+          id: this.noteId,
+          noteName: this.addNote.noteName,
+          noteDetails: this.addNote.noteDetails
+        })
         .then(res => {
-          if(res.data.success){
+          if (res.data.success) {
             this.$message.success(res.data.message);
-          }else{
+          } else {
             this.$message.warning(res.data.message);
           }
-        })
+        });
       this.visible = false;
     },
     editNote(id) {
-      this.noteId= id;
+      this.noteId = id;
       this.loading = true;
       this.showModalViewNotes = false;
       this.isUpdateNote = true;
@@ -241,9 +246,9 @@ export default {
         .post("/api/get-single-note", { id })
         .then(res => {
           if (res.data.success) {
-            this.visible = true,
-            this.loading = false,
-            this.addNote = res.data.doc.note
+            (this.visible = true),
+              (this.loading = false),
+              (this.addNote = res.data.doc.note);
           }
         })
         .catch(err => {
@@ -252,12 +257,11 @@ export default {
     },
     handleOk(userId) {
       this.addNote.userId = userId;
-      axios.post("/api/add-note", this.addNote)
-        .then(res => {
-          if(res.data.success){
-            this.$message.success(res.data.message);
-          }
-        })
+      axios.post("/api/add-note", this.addNote).then(res => {
+        if (res.data.success) {
+          this.$message.success(res.data.message);
+        }
+      });
       this.visible = false;
     },
     cancel(e) {

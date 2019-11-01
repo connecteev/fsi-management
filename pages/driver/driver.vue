@@ -116,17 +116,17 @@
                     />
                   </a-form-item>
                   <a-form-item label='Expiry Date' >
-                    <a-date-picker @change="setExpiryDate" format="YYYY-MM-DD" v-bind:value=" document.expiryDate !== '' ? moment(document.expiryDate,'DD-MM-YYYY') : null"/>
+                    <a-date-picker @change="setExpiryDate" format="YYYY-MM-DD" v-bind:value=" document.expiryDate !== '' ? moment(document.expiryDate,'YYYY-MM-DD') : null"/>
                   </a-form-item>
                   <a-row :gutter="16">
                     <a-col class="gutter-row" :span="12">
                       <a-form-item label='Red Alert Date' >
-                        <a-date-picker @change="setRedAlertDate" format="YYYY-MM-DD" v-bind:value=" document.redAlertDate !== '' ? moment(document.redAlertDate,'DD-MM-YYYY') : null"/>
+                        <a-date-picker @change="setRedAlertDate" format="YYYY-MM-DD" v-bind:value=" document.redAlertDate !== '' ? moment(document.redAlertDate,'YYYY-MM-DD') : null"/>
                       </a-form-item>
                     </a-col>
                     <a-col class="gutter-row" :span="12">
                       <a-form-item label='Green Alert Date' >
-                        <a-date-picker @change="setGreenAlertDate" format="YYYY-MM-DD" v-bind:value=" document.greenAlertDate !== '' ? moment(document.greenAlertDate,'DD-MM-YYYY') : null"/>
+                        <a-date-picker @change="setGreenAlertDate" format="YYYY-MM-DD" v-bind:value=" document.greenAlertDate !== '' ? moment(document.greenAlertDate,'YYYY-MM-DD') : null"/>
                       </a-form-item>    
                     </a-col>
                   
@@ -189,12 +189,12 @@ const columns = [
     sorter: (a, b) => a.driver.name.length - b.driver.name.length
   },
   {
-    title: "Email",
-    dataIndex: "driver.email",
-    width: "10%",
-    scopedSlots: { customRender: "email" },
+    title: "D.O.B",
+    dataIndex: "driver.dateOfBirth",
+    width: "5%",
+    scopedSlots: { customRender: "dateOfBirth" },
     onFilter: (value, record) => record.name.indexOf(value) === 0,
-    sorter: (a, b) => a.driver.email.length - b.driver.email.length
+    sorter: (a, b) => a.driver.dateOfBirth.length - b.driver.dateOfBirth.length
   },
   {
     title: "Phone",
@@ -215,7 +215,7 @@ const columns = [
     title: "Address",
     dataIndex: "driver.address.streetAddress",
     scopedSlots: { customRender: "address" },
-    width: "7%",
+    width: "15%",
     sorter: (a, b) =>
       a.driver.address.streetAddress.length -
       b.driver.address.streetAddress.length
@@ -297,7 +297,7 @@ export default {
       addNote: {},
       userNotes: [],
       isUpdateNote: false,
-      noteId: '',
+      noteId: ""
     };
   },
   beforeCreate() {
@@ -354,9 +354,9 @@ export default {
       this.visible = true;
     },
     viewNotes(userId) {
-      axios.post("/api/get-user-note", {userId}).then( res => {
+      axios.post("/api/get-user-note", { userId }).then(res => {
         this.userNotes = res.data.notes;
-      })
+      });
     },
     deleteNote(id) {
       axios.post("/api/delete-note", { id }).then(res => {
@@ -367,22 +367,27 @@ export default {
       });
     },
     handleCancel() {
-        console.log("function clicked")
-        this.showModalViewNotes = false;
+      console.log("function clicked");
+      this.showModalViewNotes = false;
     },
-    updateNote(){
-      axios.post("/api/update-note", { id: this.noteId, noteName: this.addNote.noteName , noteDetails: this.addNote.noteDetails})
+    updateNote() {
+      axios
+        .post("/api/update-note", {
+          id: this.noteId,
+          noteName: this.addNote.noteName,
+          noteDetails: this.addNote.noteDetails
+        })
         .then(res => {
-          if(res.data.success){
+          if (res.data.success) {
             this.$message.success(res.data.message);
-          }else{
+          } else {
             this.$message.warning(res.data.message);
           }
-        })
+        });
       this.visible = false;
     },
     editNote(id) {
-      this.noteId= id;
+      this.noteId = id;
       this.loading = true;
       this.showModalViewNotes = false;
       this.isUpdateNote = true;
@@ -390,9 +395,9 @@ export default {
         .post("/api/get-single-note", { id })
         .then(res => {
           if (res.data.success) {
-            this.visible = true,
-            this.loading = false,
-            this.addNote = res.data.doc.note
+            (this.visible = true),
+              (this.loading = false),
+              (this.addNote = res.data.doc.note);
           }
         })
         .catch(err => {
@@ -401,12 +406,11 @@ export default {
     },
     handleOk(userId) {
       this.addNote.userId = userId;
-      axios.post("/api/add-note", this.addNote)
-        .then(res => {
-          if(res.data.success){
-            this.$message.success(res.data.message);
-          }
-        })
+      axios.post("/api/add-note", this.addNote).then(res => {
+        if (res.data.success) {
+          this.$message.success(res.data.message);
+        }
+      });
       this.visible = false;
     },
     cancel(e) {

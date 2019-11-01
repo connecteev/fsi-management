@@ -116,17 +116,17 @@
                       />
                     </a-form-item>
                     <a-form-item label='Expiry Date' >
-                      <a-date-picker @change="setExpiryDate" format="YYYY-MM-DD" v-bind:value=" document.expiryDate !== '' ? moment(document.expiryDate,'DD-MM-YYYY') : null"/>
+                      <a-date-picker @change="setExpiryDate" format="YYYY-MM-DD" v-bind:value=" document.expiryDate !== '' ? moment(document.expiryDate,'YYYY-MM-DD') : null"/>
                     </a-form-item>
                     <a-row :gutter="16">
                       <a-col class="gutter-row" :span="12">
                         <a-form-item label='Red Alert Date' >
-                          <a-date-picker @change="setRedAlertDate" format="YYYY-MM-DD" v-bind:value=" document.redAlertDate !== '' ? moment(document.redAlertDate,'DD-MM-YYYY') : null"/>
+                          <a-date-picker @change="setRedAlertDate" format="YYYY-MM-DD" v-bind:value=" document.redAlertDate !== '' ? moment(document.redAlertDate,'YYYY-MM-DD') : null"/>
                         </a-form-item>
                       </a-col>
                       <a-col class="gutter-row" :span="12">
                         <a-form-item label='Green Alert Date' >
-                          <a-date-picker @change="setGreenAlertDate" format="YYYY-MM-DD" v-bind:value=" document.greenAlertDate !== '' ? moment(document.greenAlertDate,'DD-MM-YYYY') : null"/>
+                          <a-date-picker @change="setGreenAlertDate" format="YYYY-MM-DD" v-bind:value=" document.greenAlertDate !== '' ? moment(document.greenAlertDate,'YYYY-MM-DD') : null"/>
                         </a-form-item>    
                       </a-col>
                     
@@ -189,12 +189,12 @@ const columns = [
     sorter: (a, b) => a.pa.name.length - b.pa.name.length
   },
   {
-    title: "Email",
-    dataIndex: "pa.email",
-    width: "10%",
-    scopedSlots: { customRender: "email" },
+    title: "D.O.B",
+    dataIndex: "pa.dateOfBirth",
+    width: "8%",
+    scopedSlots: { customRender: "dateOfBirth" },
     onFilter: (value, record) => record.name.indexOf(value) === 0,
-    sorter: (a, b) => a.pa.email.length - b.pa.email.length
+    sorter: (a, b) => a.pa.dateOfBirth.length - b.pa.dateOfBirth.length
   },
   {
     title: "Phone",
@@ -214,7 +214,7 @@ const columns = [
     title: "Address",
     dataIndex: "pa.address.streetAddress",
     scopedSlots: { customRender: "address" },
-    width: "10%",
+    width: "15%",
     sorter: (a, b) =>
       a.pa.address.streetAddress.length - b.pa.address.streetAddress.length
   },
@@ -260,9 +260,9 @@ function onChange(pagination, filters, sorter) {
   console.log("params", pagination, filters, sorter);
 }
 function getBase64(img, callback) {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result));
+  reader.readAsDataURL(img);
 }
 export default {
   data() {
@@ -274,7 +274,7 @@ export default {
       showAddDocModal: false,
       confirmLoading: false,
       file: null,
-      imageUrl: '',
+      imageUrl: "",
       uploading: false,
       document: {
         expiryDate: "",
@@ -291,7 +291,7 @@ export default {
       addNote: {},
       userNotes: [],
       isUpdateNote: false,
-      noteId: '',
+      noteId: ""
     };
   },
   beforeCreate() {
@@ -319,12 +319,12 @@ export default {
       this.file = null;
     },
     handleChange(info) {
-      console.log("file change")
-      if (info.file.status === 'uploading') {
+      console.log("file change");
+      if (info.file.status === "uploading") {
         this.loading = true;
         return;
       }
-      if (info.file.status === 'done') {
+      if (info.file.status === "done") {
         // Get this url from response in real world.
         getBase64(info.file.originFileObj, imageUrl => {
           this.imageUrl = imageUrl;
@@ -333,14 +333,14 @@ export default {
       }
     },
     beforeUpload(file) {
-      const isJPG = file.type === 'image/jpeg' || 'image/png';
+      const isJPG = file.type === "image/jpeg" || "image/png";
       this.file = file;
       if (!isJPG) {
-        this.$message.error('You can only upload JPG file!');
+        this.$message.error("You can only upload JPG file!");
       }
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
-        this.$message.error('Image must smaller than 2MB!');
+        this.$message.error("Image must smaller than 2MB!");
       }
       return isJPG && isLt2M;
     },
@@ -348,9 +348,9 @@ export default {
       this.visible = true;
     },
     viewNotes(userId) {
-      axios.post("/api/get-user-note", {userId}).then( res => {
+      axios.post("/api/get-user-note", { userId }).then(res => {
         this.userNotes = res.data.notes;
-      })
+      });
     },
     deleteNote(id) {
       axios.post("/api/delete-note", { id }).then(res => {
@@ -361,21 +361,26 @@ export default {
       });
     },
     handleCancel() {
-        this.showModalViewNotes = false;
+      this.showModalViewNotes = false;
     },
-    updateNote(){
-      axios.post("/api/update-note", { id: this.noteId, noteName: this.addNote.noteName , noteDetails: this.addNote.noteDetails})
+    updateNote() {
+      axios
+        .post("/api/update-note", {
+          id: this.noteId,
+          noteName: this.addNote.noteName,
+          noteDetails: this.addNote.noteDetails
+        })
         .then(res => {
-          if(res.data.success){
+          if (res.data.success) {
             this.$message.success(res.data.message);
-          }else{
+          } else {
             this.$message.warning(res.data.message);
           }
-        })
+        });
       this.visible = false;
     },
     editNote(id) {
-      this.noteId= id;
+      this.noteId = id;
       this.loading = true;
       this.showModalViewNotes = false;
       this.isUpdateNote = true;
@@ -383,9 +388,9 @@ export default {
         .post("/api/get-single-note", { id })
         .then(res => {
           if (res.data.success) {
-            this.visible = true,
-            this.loading = false,
-            this.addNote = res.data.doc.note
+            (this.visible = true),
+              (this.loading = false),
+              (this.addNote = res.data.doc.note);
           }
         })
         .catch(err => {
@@ -394,12 +399,11 @@ export default {
     },
     handleOk(userId) {
       this.addNote.userId = userId;
-      axios.post("/api/add-note", this.addNote)
-        .then(res => {
-          if(res.data.success){
-            this.$message.success(res.data.message);
-          }
-        })
+      axios.post("/api/add-note", this.addNote).then(res => {
+        if (res.data.success) {
+          this.$message.success(res.data.message);
+        }
+      });
       this.visible = false;
     },
     cancel(e) {
@@ -432,25 +436,24 @@ export default {
                 this.confirmLoading = false;
                 this.$message.success(res.data.message);
                 this.uploading = false;
-                this.document.documentName = '';
-                this.document.userId = '';
-                this.document.userName = '';
-                this.document.redAlertDate = '';
-                this.document.expiryDate = '';
-                this.document.greenAlertDate = '';
-                this.document.status = '';
-                this.imageUrl = '';
+                this.document.documentName = "";
+                this.document.userId = "";
+                this.document.userName = "";
+                this.document.redAlertDate = "";
+                this.document.expiryDate = "";
+                this.document.greenAlertDate = "";
+                this.document.status = "";
+                this.imageUrl = "";
                 this.isDisabledUploadButton = false;
                 this.confirmLoading = false;
                 this.$message.success(res.data.message);
                 this.form.setFieldsValue({
-                  documentName: '',
+                  documentName: ""
                 });
                 this.form.setFieldsValue({
-                  file: null,
-
+                  file: null
                 });
-                
+
                 this.showAddDocModal = false;
               }
               if (!res.data.success) {

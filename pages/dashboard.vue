@@ -3,43 +3,35 @@
     <v-container grid-list-xl fluid>
       <v-layout row wrap>
         <!-- mini statistic start -->
-        <!-- <v-flex lg3 sm6 xs12>
+        <v-flex lg4 sm6 xs12>
           <mini-statistic
-            icon="fa fa-facebook"
-            title="100+"
-            sub-title="Likes"
+            icon="fa fa-car"
+            :title="allDriver.length.toString()"
+            sub-title="Total Drivers"
             color="indigo"
           >
           </mini-statistic>
         </v-flex>
-        <v-flex lg3 sm6 xs12>
+        <v-flex lg4 sm6 xs12>
           <mini-statistic
-            icon="fa fa-google"
-            title="150+"
-            sub-title="Connections"
+            icon="fa fa-child "
+            :title="allChild.length.toString()"
+            sub-title="Total Childs"
             color="red"
           >
           </mini-statistic>
         </v-flex>
-        <v-flex lg3 sm6 xs12>
+        <v-flex lg4 sm6 xs12>
           <mini-statistic
-            icon="fa fa-twitter"
-            title="200+"
-            sub-title="Followers"
-            color="light-blue"
-          >
-          </mini-statistic>
-        </v-flex>
-        <v-flex lg3 sm6 xs12>
-          <mini-statistic
-            icon="fa fa-instagram"
-            title="50+"
-            sub-title="Shots"
+            icon="fa fa-user-o "
+            :title="allPa.length.toString()"
+            sub-title="Total PA's"
             color="purple"
           >
           </mini-statistic>
-        </v-flex> -->
-        <!-- mini statistic  end --> 
+        </v-flex>
+        
+        <!-- mini statistic  end  -->
         <v-flex lg12 sm12 xs12>
           <h4>Driver Absent Today - {{ moment().format('LL') }}</h4>
           <a-table :columns="columns" :dataSource="data" @change="onChange" rowKey="_id" :loading="loading">
@@ -199,7 +191,8 @@ const expiringDocColumns = [
     // specify the condition of filtering result
     // here is that finding the name started with `value`
     onFilter: (value, record) => record.name.indexOf(value) === 0,
-    sorter: (a, b) => a.document.documentName.length - b.document.documentName.length
+    sorter: (a, b) =>
+      a.document.documentName.length - b.document.documentName.length
   },
   {
     title: "Expired Date",
@@ -208,7 +201,7 @@ const expiringDocColumns = [
     scopedSlots: { customRender: "date" },
     // specify the condition of filtering result
     // here is that finding the name started with `value`
-    onFilter: (value, record) => record.name.indexOf(value) === 0,
+    onFilter: (value, record) => record.name.indexOf(value) === 0
   },
   {
     title: "Edit",
@@ -246,6 +239,7 @@ export default {
       paData,
       allDriver: [],
       allPa: [],
+      allChild: [],
       expiringDocData: [],
       loading: false,
       showModal: false,
@@ -275,7 +269,6 @@ export default {
       this.showModal = false;
     },
     editDoc(id) {
-      
       this.$router.push(`/view-docs/edit/${id}`);
     },
 
@@ -297,7 +290,7 @@ export default {
           userId: id,
           alternativeShifts: this.alternativeShifts
         })
-        .then( res => {
+        .then(res => {
           if (res.data.success) {
             this.$message.success(res.data.message);
             this.alternativeShifts.alternativeWork.date = "";
@@ -308,7 +301,7 @@ export default {
             this.showModal = false;
             this.showPaModal = false;
             if (this.isDriver) {
-               this.data.splice(this.userIndex, 1);
+              this.data.splice(this.userIndex, 1);
               this.isDriver = false;
             }
             if (this.isPa) {
@@ -489,10 +482,17 @@ export default {
         }
       });
     },
-    getAllExpiringDoc(){
-      axios.get("/api/get-expired-document").then( res => {
+    async getChilds() {
+      axios.get("/api/get-all-child").then(async res => {
         if (res.data.success) {
-          this.expiringDocData =  res.data.documents.sort();
+          this.allChild = await res.data.childs;
+        }
+      });
+    },
+    getAllExpiringDoc() {
+      axios.get("/api/get-expired-document").then(res => {
+        if (res.data.success) {
+          this.expiringDocData = res.data.documents.sort();
         }
       });
     },
@@ -514,7 +514,8 @@ export default {
     this.getAllAttendence();
     this.getPa();
     this.getAllPa();
-    this.getAllExpiringDoc()
+    this.getChilds();
+    this.getAllExpiringDoc();
   }
 };
 </script>
