@@ -175,26 +175,9 @@
                         label="Assign Driver"
                         v-if="isChild"
                         >
-                        <div v-if="child.assignedDriver.driverName">
-                          <a-select
-                            allowClear
-                            showSearch
-                            placeholder="Search or Select a driver"
-                            optionFilterProp="children"
-                            style="width: 200px"
-                            @focus="handleFocus"
-                            @blur="handleBlur"
-                            @change="setAssignDriver"
-                            :filterOption="filterOption"
-                            :defaultValue="child.assignedDriver.driverName"
-                          >
-                              <a-select-option v-for="(item, index) in drivers"
-                              :key="index" :value="item._id +' '+ item.driver.name">{{item.driver.name}}</a-select-option>
-                              
-                          </a-select>
-                        </div>
-                        <div v-else>
-                          <a-select
+                          <div v-if="child.assignedDriver.driverName">
+                            <a-select
+                              allowClear
                               showSearch
                               placeholder="Search or Select a driver"
                               optionFilterProp="children"
@@ -203,14 +186,31 @@
                               @blur="handleBlur"
                               @change="setAssignDriver"
                               :filterOption="filterOption"
-                          >
-                  
-                              <a-select-option v-for="(item, index) in drivers"
-                              :key="index" :value="item._id +' '+ item.driver.name">{{item.driver.name}}</a-select-option>
-                              
-                          </a-select>
+                              :defaultValue="child.assignedDriver.driverName"
+                            >
+                                <a-select-option v-for="(item, index) in drivers"
+                                :key="index" :value="item._id +' '+ item.driver.name">{{item.driver.name}}</a-select-option>
+                                
+                            </a-select>
+                          </div>
+                          <div v-else>
+                            <a-select
+                                showSearch
+                                placeholder="Search or Select a driver"
+                                optionFilterProp="children"
+                                style="width: 200px"
+                                @focus="handleFocus"
+                                @blur="handleBlur"
+                                @change="setAssignDriver"
+                                :filterOption="filterOption"
+                            >
+                    
+                                <a-select-option v-for="(item, index) in drivers"
+                                :key="index" :value="item._id +' '+ item.driver.name">{{item.driver.name}}</a-select-option>
+                                
+                            </a-select>
 
-                        </div>
+                          </div>
 
 
                         </a-form-item>
@@ -219,26 +219,9 @@
                         label="Assign Pa"
                         v-if="isChild"
                         >
-                        <div v-if="child.assignedPa.paName">
-                          <a-select
-                            allowClear
-                            showSearch
-                            placeholder="Search or Select a pa"
-                            optionFilterProp="children"
-                            style="width: 200px"
-                            @focus="handleFocus"
-                            @blur="handleBlur"
-                            @change="setAssignPa"
-                            :filterOption="filterOption"
-                            :defaultValue="child.assignedPa.paName"
-                          >
-                              <a-select-option v-for="(item, index) in pas"
-                              :key="index" :value="item._id +' '+ item.pa.name">{{item.pa.name}}</a-select-option>
-                              
-                          </a-select>
-                        </div>
-                        <div v-else>
-                          <a-select
+                          <div v-if="child.assignedPa.paName">
+                            <a-select
+                              allowClear
                               showSearch
                               placeholder="Search or Select a pa"
                               optionFilterProp="children"
@@ -247,16 +230,31 @@
                               @blur="handleBlur"
                               @change="setAssignPa"
                               :filterOption="filterOption"
-                          >
-                  
-                              <a-select-option v-for="(item, index) in pas"
-                              :key="index" :value="item._id +' '+ item.pa.name">{{item.pa.name}}</a-select-option>
-                              
-                          </a-select>
+                              :defaultValue="child.assignedPa.paName"
+                            >
+                                <a-select-option v-for="(item, index) in pas"
+                                :key="index" :value="item._id +' '+ item.pa.name">{{item.pa.name}}</a-select-option>
+                                
+                            </a-select>
+                          </div>
+                          <div v-else>
+                            <a-select
+                                showSearch
+                                placeholder="Search or Select a pa"
+                                optionFilterProp="children"
+                                style="width: 200px"
+                                @focus="handleFocus"
+                                @blur="handleBlur"
+                                @change="setAssignPa"
+                                :filterOption="filterOption"
+                            >
+                    
+                                <a-select-option v-for="(item, index) in pas"
+                                :key="index" :value="item._id +' '+ item.pa.name">{{item.pa.name}}</a-select-option>
+                                
+                            </a-select>
 
-                        </div>
-
-
+                          </div>
                         </a-form-item>
                         <a-form-item
                         v-bind="formItemLayout"
@@ -572,6 +570,12 @@ export default {
           this.isChild = true;
           let childDetails = res.data.child;
           this.child = childDetails;
+          if (!childDetails.assignedPa) {
+            this.child["assignedPa"] = {
+              paId: "",
+              paName: ""
+            };
+          }
           if (this.isChild) {
             this.form.setFieldsValue({ dadPhone: childDetails.contactNumber });
             this.form.setFieldsValue({ momphone: 123 });
@@ -594,6 +598,7 @@ export default {
           if (childDetails.status == "Active") {
             this.defaultChecked = true;
           }
+
           this.loading = false;
         })
         .catch(err => {
