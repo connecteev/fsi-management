@@ -4,17 +4,7 @@ let Child = require("../model/child");
 // Handle - create child with data from the client app on POST request
 exports.create_child = function (req, res) {
   // Create a new child
-  Child.findOne({
-      "child.email": req.body.email
-    },
-    function (err, child) {
-      if (err) {
-        return res.send(err);
-      }
-      if (child) {
-        return res.send("This email is already taken.");
-      } else {
-        let childData = new Child();
+  let childData = new Child();
         childData.child.name = req.body.name;
         childData.child.email = req.body.email;
         childData.child.dateOfBirth = req.body.dateOfBirth;
@@ -49,11 +39,14 @@ exports.create_child = function (req, res) {
           })
           .catch(err => {
             console.log(err);
-            res.status(400).send("unable to save user to database");
+            res.status(400).send(
+              {
+                success: false,
+                message: "Could not saved to DB.",
+                
+              }
+            );
           });
-      }
-    }
-  );
 };
 
 // get all child
@@ -100,9 +93,79 @@ exports.update_child = function (req, res) {
     doc.child.schoolName = req.body.schoolName;
     doc.child.schoolAddress = req.body.schoolAddress;
     doc.child.homePickUpTime = req.body.homePickUpTime;
+    doc.child.schoolPickUpTime = req.body.schoolPoc.child.name = req.body.name;
+    doc.child.email = req.body.email;
+    doc.child.dateOfBirth = req.body.dateOfBirth;
+    doc.child.address = req.body.address;
+    doc.child.contactNumber = req.body.contactNumber;
+    doc.child.parentsNumber = req.body.parentsNumber;
+    doc.child.landline = req.body.landline;
+    doc.child.medicalHistory = req.body.medicalHistory;
+    doc.child.schoolName = req.body.schoolName;
+    doc.child.schoolAddress = req.body.schoolAddress;
+    doc.child.homePickUpTime = req.body.homePickUpTime;
     doc.child.schoolPickUpTime = req.body.schoolPickUpTime;
     doc.child.travelDays = req.body.travelDays;
     doc.child.routeNumber = req.body.routeNumber;
+    doc.child.seatingPosition = req.body.seatingPosition;
+    doc.child.carSeat = req.body.carSeat;
+    doc.child.music = req.body.music;
+    doc.child.joinDate = req.body.joinDate;
+    doc.child.leaveDate = req.body.leaveDate;
+    doc.child.assignedDriver = req.body.assignedDriver;
+    doc.child.paRequired = req.body.paRequired;
+    doc.child.status = req.body.status;
+    doc.save()
+      .then(item => {
+        res.json({
+          success: true,
+          message: "child updated successfully.",
+          item
+        })
+      })
+      .catch(err => {
+        res.json({
+          message: "Unable to update.",
+          err
+        })
+      })
+    doc.child.travelDays = req.body.travelDays;
+    doc.child.routeNumber = req.body.routeNumber;oc.child.name = req.body.name;
+    doc.child.email = req.body.email;
+    doc.child.dateOfBirth = req.body.dateOfBirth;
+    doc.child.address = req.body.address;
+    doc.child.contactNumber = req.body.contactNumber;
+    doc.child.parentsNumber = req.body.parentsNumber;
+    doc.child.landline = req.body.landline;
+    doc.child.medicalHistory = req.body.medicalHistory;
+    doc.child.schoolName = req.body.schoolName;
+    doc.child.schoolAddress = req.body.schoolAddress;
+    doc.child.homePickUpTime = req.body.homePickUpTime;
+    doc.child.schoolPickUpTime = req.body.schoolPickUpTime;
+    doc.child.travelDays = req.body.travelDays;
+    doc.child.routeNumber = req.body.routeNumber;
+    doc.child.seatingPosition = req.body.seatingPosition;
+    doc.child.carSeat = req.body.carSeat;
+    doc.child.music = req.body.music;
+    doc.child.joinDate = req.body.joinDate;
+    doc.child.leaveDate = req.body.leaveDate;
+    doc.child.assignedDriver = req.body.assignedDriver;
+    doc.child.paRequired = req.body.paRequired;
+    doc.child.status = req.body.status;
+    doc.save()
+      .then(item => {
+        res.json({
+          success: true,
+          message: "child updated successfully.",
+          item
+        })
+      })
+      .catch(err => {
+        res.json({
+          message: "Unable to update.",
+          err
+        })
+      })
     doc.child.seatingPosition = req.body.seatingPosition;
     doc.child.carSeat = req.body.carSeat;
     doc.child.music = req.body.music;
