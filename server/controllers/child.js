@@ -5,48 +5,49 @@ let Child = require("../model/child");
 exports.create_child = function (req, res) {
   // Create a new child
   let childData = new Child();
-        childData.child.name = req.body.name;
-        childData.child.email = req.body.email;
-        childData.child.dateOfBirth = req.body.dateOfBirth;
-        childData.child.address = req.body.address;
-        childData.child.contactNumber = req.body.contactNumber;
-        childData.child.parentsNumber = req.body.parentsNumber;
-        childData.child.landline = req.body.landline;
-        childData.child.medicalHistory = req.body.medicalHistory;
-        childData.child.schoolName = req.body.schoolName;
-        childData.child.schoolAddress = req.body.schoolAddress;
-        childData.child.homePickUpTime = req.body.homePickUpTime;
-        childData.child.schoolPickUpTime = req.body.schoolPickUpTime;
-        childData.child.travelDays = req.body.travelDays;
-        childData.child.routeNumber = req.body.routeNumber;
-        childData.child.carSeat = req.body.carSeat;
-        childData.child.seatingPosition = req.body.seatingPosition;
-        childData.child.music = req.body.music;
-        childData.child.joinDate = req.body.joinDate;
-        childData.child.assignedDriver = req.body.assignedDriver;
-        childData.child.paRequired = req.body.paRequired;
-        childData.child.status = req.body.status;
-        childData.child.createdAt = Date.now();
+  childData.child.name = req.body.name;
+  childData.child.email = req.body.email;
+  childData.child.dateOfBirth = req.body.dateOfBirth;
+  childData.child.address = req.body.address;
+  childData.child.contactNumber = req.body.contactNumber;
+  childData.child.parentsNumber = req.body.parentsNumber;
+  childData.child.landline = req.body.landline;
+  childData.child.medicalHistory = req.body.medicalHistory;
+  childData.child.schoolName = req.body.schoolName;
+  childData.child.schoolAddress = req.body.schoolAddress;
+  childData.child.paPickUpTimeAm = req.body.paPickUpTimeAm;
+  childData.child.paPickUpTimePm = req.body.paPickUpTimePm;
+  childData.child.homePickUpTime = req.body.homePickUpTime;
+  childData.child.schoolPickUpTime = req.body.schoolPickUpTime;
+  childData.child.travelDays = req.body.travelDays;
+  childData.child.routeNumber = req.body.routeNumber;
+  childData.child.carSeat = req.body.carSeat;
+  childData.child.seatingPosition = req.body.seatingPosition;
+  childData.child.music = req.body.music;
+  childData.child.joinDate = req.body.joinDate;
+  childData.child.assignedDriver = req.body.assignedDriver;
+  childData.child.assignedPa = req.body.assignedPa;
+  childData.child.paRequired = req.body.paRequired;
+  childData.child.status = req.body.status;
+  childData.child.createdAt = Date.now();
 
-        childData
-          .save()
-          .then(item => {
-            res.send({
-              success: true,
-              message: "Saved successfully.",
-              item
-            });
-          })
-          .catch(err => {
-            console.log(err);
-            res.status(400).send(
-              {
-                success: false,
-                message: "Could not saved to DB.",
-                
-              }
-            );
-          });
+  childData
+    .save()
+    .then(item => {
+      res.send({
+        success: true,
+        message: "Saved successfully.",
+        item
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(400).send({
+        success: false,
+        message: "Could not saved to DB.",
+
+      });
+    });
 };
 
 // get all child
@@ -92,8 +93,6 @@ exports.update_child = function (req, res) {
     doc.child.medicalHistory = req.body.medicalHistory;
     doc.child.schoolName = req.body.schoolName;
     doc.child.schoolAddress = req.body.schoolAddress;
-    doc.child.homePickUpTime = req.body.homePickUpTime;
-    doc.child.schoolPickUpTime = req.body.schoolPoc.child.name = req.body.name;
     doc.child.email = req.body.email;
     doc.child.dateOfBirth = req.body.dateOfBirth;
     doc.child.address = req.body.address;
@@ -105,6 +104,8 @@ exports.update_child = function (req, res) {
     doc.child.schoolAddress = req.body.schoolAddress;
     doc.child.homePickUpTime = req.body.homePickUpTime;
     doc.child.schoolPickUpTime = req.body.schoolPickUpTime;
+    doc.child.paPickUpTimeAm = req.body.paPickUpTimeAm;
+    doc.child.paPickUpTimePm = req.body.paPickUpTimePm;
     doc.child.travelDays = req.body.travelDays;
     doc.child.routeNumber = req.body.routeNumber;
     doc.child.seatingPosition = req.body.seatingPosition;
@@ -113,6 +114,7 @@ exports.update_child = function (req, res) {
     doc.child.joinDate = req.body.joinDate;
     doc.child.leaveDate = req.body.leaveDate;
     doc.child.assignedDriver = req.body.assignedDriver;
+    doc.child.assignedPa = req.body.assignedPa;
     doc.child.paRequired = req.body.paRequired;
     doc.child.status = req.body.status;
     doc.save()
@@ -129,65 +131,7 @@ exports.update_child = function (req, res) {
           err
         })
       })
-    doc.child.travelDays = req.body.travelDays;
-    doc.child.routeNumber = req.body.routeNumber;oc.child.name = req.body.name;
-    doc.child.email = req.body.email;
-    doc.child.dateOfBirth = req.body.dateOfBirth;
-    doc.child.address = req.body.address;
-    doc.child.contactNumber = req.body.contactNumber;
-    doc.child.parentsNumber = req.body.parentsNumber;
-    doc.child.landline = req.body.landline;
-    doc.child.medicalHistory = req.body.medicalHistory;
-    doc.child.schoolName = req.body.schoolName;
-    doc.child.schoolAddress = req.body.schoolAddress;
-    doc.child.homePickUpTime = req.body.homePickUpTime;
-    doc.child.schoolPickUpTime = req.body.schoolPickUpTime;
-    doc.child.travelDays = req.body.travelDays;
-    doc.child.routeNumber = req.body.routeNumber;
-    doc.child.seatingPosition = req.body.seatingPosition;
-    doc.child.carSeat = req.body.carSeat;
-    doc.child.music = req.body.music;
-    doc.child.joinDate = req.body.joinDate;
-    doc.child.leaveDate = req.body.leaveDate;
-    doc.child.assignedDriver = req.body.assignedDriver;
-    doc.child.paRequired = req.body.paRequired;
-    doc.child.status = req.body.status;
-    doc.save()
-      .then(item => {
-        res.json({
-          success: true,
-          message: "child updated successfully.",
-          item
-        })
-      })
-      .catch(err => {
-        res.json({
-          message: "Unable to update.",
-          err
-        })
-      })
-    doc.child.seatingPosition = req.body.seatingPosition;
-    doc.child.carSeat = req.body.carSeat;
-    doc.child.music = req.body.music;
-    doc.child.joinDate = req.body.joinDate;
-    doc.child.leaveDate = req.body.leaveDate;
-    doc.child.assignedDriver = req.body.assignedDriver;
-    doc.child.paRequired = req.body.paRequired;
-    doc.child.status = req.body.status;
-    doc.save()
-      .then(item => {
-        res.json({
-          success: true,
-          message: "child updated successfully.",
-          item
-        })
-      })
-      .catch(err => {
-        res.json({
-          message: "Unable to update.",
-          err
-        })
-      })
+
   })
 }
 

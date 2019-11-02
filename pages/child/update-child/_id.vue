@@ -216,6 +216,50 @@
                         </a-form-item>
                         <a-form-item
                         v-bind="formItemLayout"
+                        label="Assign Pa"
+                        v-if="isChild"
+                        >
+                        <div v-if="child.assignedPa.paName">
+                          <a-select
+                            allowClear
+                            showSearch
+                            placeholder="Search or Select a pa"
+                            optionFilterProp="children"
+                            style="width: 200px"
+                            @focus="handleFocus"
+                            @blur="handleBlur"
+                            @change="setAssignPa"
+                            :filterOption="filterOption"
+                            :defaultValue="child.assignedPa.paName"
+                          >
+                              <a-select-option v-for="(item, index) in pas"
+                              :key="index" :value="item._id +' '+ item.pa.name">{{item.pa.name}}</a-select-option>
+                              
+                          </a-select>
+                        </div>
+                        <div v-else>
+                          <a-select
+                              showSearch
+                              placeholder="Search or Select a pa"
+                              optionFilterProp="children"
+                              style="width: 200px"
+                              @focus="handleFocus"
+                              @blur="handleBlur"
+                              @change="setAssignPa"
+                              :filterOption="filterOption"
+                          >
+                  
+                              <a-select-option v-for="(item, index) in pas"
+                              :key="index" :value="item._id +' '+ item.pa.name">{{item.pa.name}}</a-select-option>
+                              
+                          </a-select>
+
+                        </div>
+
+
+                        </a-form-item>
+                        <a-form-item
+                        v-bind="formItemLayout"
                         label="PA Required"
                         >
                             <a-radio-group @change="setPaRequired" v-model="child.paRequired">
@@ -298,6 +342,32 @@
                               </div>
                               <div v-else>
                                   <a-time-picker use12Hours format="h:mm a" @change="setSchoolPickTime" />
+                              </div>
+                            
+                        </a-form-item>
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="PA(Am) Pick Time"
+                        v-if="isChild"
+                        >
+                          <div v-if="child.paPickUpTimeAm">
+                                  <a-time-picker :defaultValue="moment(child.paPickUpTimeAm, 'h:mm a')" use12Hours format="h:mm a" @change="setPaAmPickTime" />
+                              </div>
+                              <div v-else>
+                                  <a-time-picker use12Hours format="h:mm a" @change="setPaAmPickTime" />
+                              </div>
+                            
+                        </a-form-item>
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="PA(Pm) Pick Time"
+                        v-if="isChild"
+                        >
+                          <div v-if="child.paPickUpTimePm">
+                                  <a-time-picker :defaultValue="moment(child.paPickUpTimePm, 'h:mm a')" use12Hours format="h:mm a" @change="setPaPmPickTime" />
+                              </div>
+                              <div v-else>
+                                  <a-time-picker use12Hours format="h:mm a" @change="setPaPmPickTime" />
                               </div>
                             
                         </a-form-item>
@@ -415,6 +485,8 @@ export default {
         schoolAddress: "",
         homePickUpTime: "",
         schoolPickUpTime: "",
+        paPickUpTimePm: "",
+        paPickUpTimeAm: "",
         carSeat: "",
         seatingPosition: "",
         music: "",
@@ -428,6 +500,10 @@ export default {
           driverId: "",
           driverName: ""
         },
+        assignedPa: {
+          paId: "",
+          paName: ""
+        },
         status: "Active"
       },
       weekDays: [
@@ -440,6 +516,7 @@ export default {
         "Saturday"
       ],
       drivers: [],
+      pas: [],
       userId: this.$route.params.id
     };
   },
@@ -459,6 +536,12 @@ export default {
     },
     setSchoolPickTime(time, timeString) {
       this.child.schoolPickUpTime = timeString;
+    },
+    setPaAmPickTime(time, timeString) {
+      this.child.paPickUpTimeAm = timeString;
+    },
+    setPaPmPickTime(time, timeString) {
+      this.child.paPickUpTimePm = timeString;
     },
     setLeavingDate(date, dateString) {
       this.child.leaveDate = dateString;
@@ -559,6 +642,17 @@ export default {
         this.child.assignedDriver.driverName = "";
       }
     },
+    setAssignPa(value) {
+      if (value) {
+        let paId = value.substr(0, value.indexOf(" ")); // id
+        let paName = value.substr(value.indexOf(" ") + 1); // name
+        this.child.assignedPa.paId = paId;
+        this.child.assignedPa.paName = paName;
+      } else {
+        this.child.assignedPa.paId = "";
+        this.child.assignedPa.paName = "";
+      }
+    },
 
     handleBlur() {
       console.log("blur");
@@ -579,11 +673,19 @@ export default {
           this.drivers = res.data.drivers;
         }
       });
+    },
+    getAllPas() {
+      axios.get("/api/get-all-pa").then(res => {
+        if (res.data.success) {
+          this.pas = res.data.pas;
+        }
+      });
     }
   },
   created() {
     this.getUserDetails();
     this.getAllDrivers();
+    this.getAllPas();
   }
 };
 </script>

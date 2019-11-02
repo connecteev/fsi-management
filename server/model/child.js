@@ -5,13 +5,7 @@ var mongoose = require('mongoose');
 // define the schema for our child model
 var childSchema = mongoose.Schema({
   child: {
-    email: {
-      type: String,
-      unique: true,
-      sparse: true,
-      trim: true,
-      lowercase: true
-    },
+    email: String,
     name: String,
     dateOfBirth: String,
     address: {
@@ -28,6 +22,8 @@ var childSchema = mongoose.Schema({
     schoolAddress: String,
     homePickUpTime: String,
     schoolPickUpTime: String,
+    paPickUpTimeAm: String,
+    paPickUpTimePm: String,
     routeNumber: String,
     carSeat: String,
     seatingPosition: String,
@@ -39,6 +35,10 @@ var childSchema = mongoose.Schema({
     assignedDriver: {
       driverName: String,
       driverId: String
+    },
+    assignedPa: {
+      paName: String,
+      paId: String
     },
     paRequired: String,
     createdAt: {

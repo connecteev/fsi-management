@@ -173,6 +173,27 @@
                         </a-select>
 
                         </a-form-item>
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Assign Pa"
+                        >
+                        <a-select
+                            showSearch
+                            placeholder="Search or Select a pa"
+                            optionFilterProp="children"
+                            style="width: 200px"
+                            @focus="handleFocus"
+                            @blur="handleBlur"
+                            @change="setAssignPa"
+                            :filterOption="filterOption"
+                            
+                        >
+                            <a-select-option v-for="(item, index) in pas"
+                            :key="index" :value="item._id +' '+ item.pa.name">{{item.pa.name}}</a-select-option>
+                            
+                        </a-select>
+
+                        </a-form-item>
                     </a-col>
                     <a-col :span="12">
                         <a-form-item
@@ -231,6 +252,18 @@
                         >
                             <a-time-picker use12Hours format="h:mm a" @change="setSchoolPickTime" />
                             
+                        </a-form-item>
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="PA(Am) Pick Time"
+                        >
+                            <a-time-picker use12Hours format="h:mm a" @change="setPaAmPickTime" />
+                        </a-form-item>
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="PA(Pm) Pick Time"
+                        >
+                            <a-time-picker use12Hours format="h:mm a" @change="setPaPmPickTime" />
                         </a-form-item>
                         <a-form-item v-bind="formItemLayout" label="Traveling Days">
                           <a-select mode="multiple" style="width: 100%" :tokenSeparators="[',']" @change="setTravelDays">
@@ -357,9 +390,14 @@ export default {
         assignedDriver: {
           driverId: "",
           driverName: ""
+        },
+        assignedPa: {
+          paId: "",
+          paName: ""
         }
       },
       drivers: [],
+      pas: [],
       weekDays: [
         "Sunday",
         "Monday",
@@ -386,6 +424,12 @@ export default {
     },
     setSchoolPickTime(time, timeString) {
       this.child.schoolPickUpTime = timeString;
+    },
+    setPaAmPickTime(time, timeString) {
+      this.child.paPickUpTimeAm = timeString;
+    },
+    setPaPmPickTime(time, timeString) {
+      this.child.paPickUpTimePm = timeString;
     },
     setTravelDays(value) {
       this.child.travelDays = [];
@@ -443,6 +487,12 @@ export default {
       this.child.assignedDriver.driverId = driverId;
       this.child.assignedDriver.driverName = driverName;
     },
+    setAssignPa(value) {
+      let paId = value.substr(0, value.indexOf(" ")); // id
+      let paName = value.substr(value.indexOf(" ") + 1); // name
+      this.child.assignedPa.paId = paId;
+      this.child.assignedPa.paName = paName;
+    },
     handleBlur() {
       console.log("blur");
     },
@@ -462,10 +512,18 @@ export default {
           this.drivers = res.data.drivers;
         }
       });
+    },
+    getAllPas() {
+      axios.get("/api/get-all-pa").then(res => {
+        if (res.data.success) {
+          this.pas = res.data.pas;
+        }
+      });
     }
   },
   created() {
     this.getAllDrivers();
+    this.getAllPas();
   }
 };
 </script>
