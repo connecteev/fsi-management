@@ -111,14 +111,7 @@ const columns = [
     onFilter: (value, record) => record.name.indexOf(value) === 0,
     sorter: (a, b) => a.child.dateOfBirth.length - b.child.dateOfBirth.length
   },
-  {
-    title: "Dad mobile",
-    dataIndex: "child.contactNumber",
-    width: "10%",
-    scopedSlots: { customRender: "phone" },
-    sorter: (a, b) =>
-      a.child.contactNumber.length - b.child.contactNumber.length
-  },
+
   {
     title: "Route",
     dataIndex: "child.routeNumber",
@@ -133,6 +126,13 @@ const columns = [
     scopedSlots: { customRender: "driverName" },
     sorter: (a, b) =>
       a.child.assignedDriver.driverName - b.child.assignedDriver.driverName
+  },
+  {
+    title: "Assigned PA",
+    dataIndex: "child.assignedPa.paName",
+    width: "10%",
+    scopedSlots: { customRender: "paName" },
+    sorter: (a, b) => a.child.assignedPa.paName - b.child.assignedPa.paName
   },
   {
     title: "Address",

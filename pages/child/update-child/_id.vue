@@ -153,7 +153,20 @@
                             </div>
                            
                         </a-form-item>
-                        
+                        <a-form-item
+                        v-bind="formItemLayout"
+                        label="Joining Date"
+                        v-if="isChild"
+                        >
+                            
+                            <div v-if="child.joinDate">
+                                <a-date-picker :defaultValue="moment(child.joinDate, 'DD-MM-YYYY')" format="DD-MM-YYYY"  @change="setJoiningDate" />
+                            </div>
+                            <div v-else>
+                                <a-date-picker @change="setJoiningDate" format="DD-MM-YYYY" />
+                            </div>
+                            
+                        </a-form-item>
                         
                          <a-form-item
                         v-bind="formItemLayout"
