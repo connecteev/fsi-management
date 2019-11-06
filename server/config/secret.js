@@ -1,4 +1,4 @@
 module.exports = {
-  database: 'mongodb+srv://admin:admin1234@fsi-dms-mf74v.mongodb.net/fsi-dms?retryWrites=true&w=majority',
+  database: 'mongodb://admin:admin1234@ds159121.mlab.com:59121/fsi-dms',
   secret: '$43@#asb)9!~asd&^%'
 };

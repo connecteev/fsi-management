@@ -4,7 +4,7 @@
       <v-layout row wrap>
         <v-flex lg12 sm12 xs12>
           <h4>Make Attendance For Today - {{ moment().format('LL') }}</h4>
-          <a-table :columns="columns" :dataSource="data" @change="onChange" rowKey="_id" :loading="loading">
+          <a-table :columns="columns" :dataSource="sortUserAlphabeticaly" @change="onChange" rowKey="_id" :loading="loading">
             <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
             
             <template slot="shifts" slot-scope="text, record, index">
@@ -82,6 +82,11 @@ export default {
   },
   beforeCreate() {
     this.form = this.$form.createForm(this);
+  },
+  computed: {
+    sortUserAlphabeticaly(){
+      return _.sortBy(this.data, [function(o) { return o.driver.name; }]);
+    }
   },
   methods: {
     moment,

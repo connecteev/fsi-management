@@ -4,13 +4,13 @@
       <v-layout row wrap>
         <v-flex lg12 sm12 xs12>
           <v-btn class="ml-4" depressed right color="primary" @click="addDriver"><v-icon dark>add</v-icon> Add Driver</v-btn>
-          <a-table :columns="columns" :dataSource="data" @change="onChange" rowKey="_id" :loading="loading">
+          <a-table :columns="columns" :dataSource="sortUserAlphabeticaly" @change="onChange" rowKey="_id" :loading="loading">
             <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
             
             <template slot="operation" slot-scope="text, record, index">
               <div class='editable-row-operations'>
                 
-                <a-button type="primary" @click="showModal()">Add Note</a-button>
+                <a-button type="primary" @click="showModal(record._id)">Add Note</a-button>
                 <a-button  @click="viewNotes(record._id), showModalViewNotes = !showModalViewNotes">View Notes</a-button>
                 <a-modal v-model="showModalViewNotes" width="1200px">
                    <template slot="footer">
@@ -82,7 +82,7 @@
                 @confirm="() => onDelete(record._id)">
                 <a-button  type="danger" href="javascript:;">Delete</a-button>
               </a-popconfirm>
-              <a-modal v-if="!isUpdateNote" title="Add note" v-model="visible" @ok="handleOk(record._id)" okText="Add note">
+              <a-modal v-if="!isUpdateNote" title="Add note" v-model="visible" @ok="addNoteToDb()" okText="Add note">
                 <a-input class="my-4" v-model="addNote.noteName" placeholder="Note Name" />
                 <a-textarea v-model="addNote.noteDetails" placeholder="Note Details" :rows="15" />
               </a-modal>
@@ -295,6 +295,7 @@ export default {
       showModalViewNotes: false,
       contentEditable: false,
       addNote: {},
+      addNoteUserId: "",
       userNotes: [],
       isUpdateNote: false,
       noteId: ""
@@ -302,6 +303,11 @@ export default {
   },
   beforeCreate() {
     this.form = this.$form.createForm(this);
+  },
+  computed: {
+    sortUserAlphabeticaly(){
+      return _.sortBy(this.data, [function(o) { return o.driver.name; }]);
+    }
   },
   methods: {
     moment,
@@ -340,18 +346,23 @@ export default {
     },
     beforeUpload(file) {
       const isJPG = file.type === "image/jpeg" || "image/png";
-      this.file = file;
-      if (!isJPG) {
-        this.$message.error("You can only upload JPG or Png file!");
-      }
       const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isLt2M) {
-        this.$message.error("Image must smaller than 2MB!");
+      if (!isJPG) {
+         this.$message.error("You can only upload JPG or Png file!");
       }
-      return isJPG && isLt2M;
+      if (!isLt2M) {
+  
+         this.$message.error("Image must smaller than 2MB!");
+        
+      }
+      else{
+        this.file = file;  
+      }   
+      return isJPG && isLt2M;  
     },
-    showModal() {
+    showModal(userId) {
       this.visible = true;
+      this.addNoteUserId = userId
     },
     viewNotes(userId) {
       axios.post("/api/get-user-note", { userId }).then(res => {
@@ -361,7 +372,7 @@ export default {
     deleteNote(id) {
       axios.post("/api/delete-note", { id }).then(res => {
         if (res.data.success) {
-          this.viewNotes();
+          this.showModalViewNotes = false;
           this.$message.success(res.data.message);
         }
       });
@@ -380,6 +391,9 @@ export default {
         .then(res => {
           if (res.data.success) {
             this.$message.success(res.data.message);
+            this.addNote = {};
+            this.noteId = "";
+            this.isUpdateNote = false;
           } else {
             this.$message.warning(res.data.message);
           }
@@ -404,11 +418,15 @@ export default {
           console.log(err);
         });
     },
-    handleOk(userId) {
-      this.addNote.userId = userId;
+    // saving
+    addNoteToDb() {
+      
+      this.addNote.userId = this.addNoteUserId;
       axios.post("/api/add-note", this.addNote).then(res => {
         if (res.data.success) {
           this.$message.success(res.data.message);
+          this.addNote = {};
+          this.addNoteUserId = ""
         }
       });
       this.visible = false;
