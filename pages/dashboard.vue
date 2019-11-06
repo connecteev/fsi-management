@@ -34,7 +34,7 @@
         <!-- mini statistic  end  -->
         <v-flex lg12 sm12 xs12>
           <h4>Driver Absent Today - {{ moment().format('LL') }}</h4>
-          <a-table :columns="columns" :dataSource="sortUserAlphabeticaly" @change="onChange" rowKey="_id" :loading="loading">
+          <a-table :columns="columns" :dataSource="data" @change="onChange" rowKey="_id" :loading="loading">
             <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
             
             <template slot="operation" slot-scope="text, record, index">
@@ -70,7 +70,7 @@
         </v-flex>  
         <v-flex lg12 sm12 xs12>
           <h4>PA Absent Today - {{ moment().format('LL') }}</h4>
-          <a-table :columns="paColumns" :dataSource="sortPaAlphabeticaly" @change="onChange" rowKey="_id" :loading="loading">
+          <a-table :columns="paColumns" :dataSource="paData" @change="onChange" rowKey="_id" :loading="loading">
             <a slot="name" slot-scope="text" href="javascript:;">{{text }}</a>
             
             <template slot="operation" slot-scope="text, record, index">
@@ -262,11 +262,19 @@ export default {
     };
   },
   computed: {
-    sortUserAlphabeticaly(){
-      return _.sortBy(this.data, [function(o) { return o.driver.name; }]);
+    sortUserAlphabeticaly() {
+      return _.sortBy(this.data, [
+        function(o) {
+          return o.driver.name;
+        }
+      ]);
     },
-    sortPaAlphabeticaly(){
-      return _.sortBy(this.paData, [function(o) { return o.pa.name; }]);
+    sortPaAlphabeticaly() {
+      return _.sortBy(this.paData, [
+        function(o) {
+          return o.pa.name;
+        }
+      ]);
     }
   },
   methods: {
