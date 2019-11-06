@@ -139,7 +139,7 @@
                     :showUploadList="false"
                     :beforeUpload="beforeUpload"
                     @change="handleChange"
-                    accept="image/jpeg,image/png,.pdf"
+                    accept="image/jpeg,image/png"
                     v-decorator="[
                         'file',
                         {
@@ -176,6 +176,7 @@
 </template>
 <script>
 import axios from "axios";
+import sortBy from "lodash/sortBy";
 import moment from "moment";
 const columns = [
   {
@@ -305,8 +306,12 @@ export default {
     this.form = this.$form.createForm(this);
   },
   computed: {
-    sortUserAlphabeticaly(){
-      return _.sortBy(this.data, [function(o) { return o.driver.name; }]);
+    sortUserAlphabeticaly() {
+      return sortBy(this.data, [
+        function(o) {
+          return o.driver.name;
+        }
+      ]);
     }
   },
   methods: {
@@ -348,21 +353,20 @@ export default {
       const isJPG = file.type === "image/jpeg" || "image/png";
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isJPG) {
-         this.$message.error("You can only upload JPG or Png file!");
+        this.$message.error("You can only upload JPG or Png file!");
       }
       if (!isLt2M) {
-  
-         this.$message.error("Image must smaller than 2MB!");
-        
+        this.file = null;
+        this.$message.error("Image must smaller than 2MB!");
+        this.imageUrl = "";
+      } else {
+        this.file = file;
       }
-      else{
-        this.file = file;  
-      }   
-      return isJPG && isLt2M;  
+      return isJPG && isLt2M;
     },
     showModal(userId) {
       this.visible = true;
-      this.addNoteUserId = userId
+      this.addNoteUserId = userId;
     },
     viewNotes(userId) {
       axios.post("/api/get-user-note", { userId }).then(res => {
@@ -420,13 +424,12 @@ export default {
     },
     // saving
     addNoteToDb() {
-      
       this.addNote.userId = this.addNoteUserId;
       axios.post("/api/add-note", this.addNote).then(res => {
         if (res.data.success) {
           this.$message.success(res.data.message);
           this.addNote = {};
-          this.addNoteUserId = ""
+          this.addNoteUserId = "";
         }
       });
       this.visible = false;
@@ -459,6 +462,9 @@ export default {
       this.$router.push(`/view-docs/${id}`);
     },
     addDocument() {
+      if (this.file == null) {
+        return this.$message.warning("Please add file to continue...");
+      }
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           this.confirmLoading = true;

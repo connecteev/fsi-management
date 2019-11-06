@@ -176,7 +176,7 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import sortBy from 'lodash/sortBy'
+import sortBy from "lodash/sortBy";
 
 const columns = [
   {
@@ -300,8 +300,12 @@ export default {
     this.form = this.$form.createForm(this);
   },
   computed: {
-    sortUserAlphabeticaly(){
-      return sortBy(this.data, [function(o) { return o.pa.name; }]);
+    sortUserAlphabeticaly() {
+      return sortBy(this.data, [
+        function(o) {
+          return o.pa.name;
+        }
+      ]);
     }
   },
   methods: {
@@ -341,20 +345,22 @@ export default {
     },
     beforeUpload(file) {
       const isJPG = file.type === "image/jpeg" || "image/png";
-      this.file = file;
-      if (!isJPG) {
-        this.$message.error("You can only upload JPG file!");
-      }
       const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isJPG) {
+        this.$message.error("You can only upload JPG or Png file!");
+      }
       if (!isLt2M) {
-        this.$message.error("Image must smaller than 2MB!");
         this.file = null;
+        this.$message.error("Image must smaller than 2MB!");
+        this.imageUrl = "";
+      } else {
+        this.file = file;
       }
       return isJPG && isLt2M;
     },
     showModal(userId) {
       this.visible = true;
-      this.addNoteUserId = userId
+      this.addNoteUserId = userId;
     },
     viewNotes(userId) {
       axios.post("/api/get-user-note", { userId }).then(res => {
@@ -364,7 +370,6 @@ export default {
     deleteNote(id) {
       axios.post("/api/delete-note", { id }).then(res => {
         if (res.data.success) {
-         
           this.$message.success(res.data.message);
           this.showModalViewNotes = false;
         }
@@ -416,7 +421,7 @@ export default {
         if (res.data.success) {
           this.$message.success(res.data.message);
           this.addNote = {};
-          this.addNoteUserId = ""
+          this.addNoteUserId = "";
         }
       });
       this.visible = false;
@@ -429,6 +434,9 @@ export default {
       this.$router.push(`/view-docs/${id}`);
     },
     addDocument() {
+      if (this.file == null) {
+        return this.$message.warning("Please add file to continue...");
+      }
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           this.confirmLoading = true;
